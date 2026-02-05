@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<trees>
+    <!--    模块组说明-->
+    <tree path="/common" title="通用模块" icon="GeneralTrialBadge" textColor="193,177,228"/>
+    <tree path="/plugin" title="插件模块" icon="GeneralTrialBadge" textColor="193,177,228"/>
+    <tree path="/starter" title="Spring boot starter 相关模块" icon="GeneralTrialBadge" textColor="193,177,228"/>
+    <tree path="/test" title="测试" icon="GeneralTrialBadge" textColor="193,177,228"/>
+
+    <!--    模块说明-->
+    <tree path="/common/xie-cell-common-lang" title="基础语言模块" icon="ToolwindowsWarningEvents"/>
+<!--    <tree path="/plugin/plugin-build" title="打包插件" icon="ToolwindowsErrorEvents"/>-->
+<!--    <tree path="/starter/starter-rbac" icon="ToolwindowsInfoEvents"/>-->
+</trees>

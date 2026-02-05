@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <groupId>org.springframework.boot</groupId>
+        <version>3.5.9</version>
+    </parent>
+
+
+    <groupId>io.github.xiechanglei</groupId>
+    <artifactId>xie-cells-parent</artifactId>
+    <version>${revision}</version>
+    <packaging>pom</packaging>
+    <name>xie-cells-parent</name>
+
+    <!--项目属性-->
+    <properties>
+        <!-- 项目构建配置参数-->
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- 定义一个全局的版本号码，减少维护版本号码的成本,
+        版本号的规则为: springboot的版本号 + . + 项目的版本号
+        -->
+        <revision>3.5.9.1</revision>
+    </properties>
+
+    <!--    子模块-->
+    <modules>
+        <module>common</module>
+        <module>starter</module>
+        <module>plugin</module>
+    </modules>
+
+    <!--全局依赖版本管理-->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.github.xiechanglei</groupId>
+                <artifactId>xie-cell-common-lang</artifactId>
+                <version>${revision}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!--    基础依赖，此处定义的依赖将在所有子模块中自动引入，不需要额外定义-->
+    <dependencies>
+        <!--        lomok插件-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!--        单元测试依赖,所有项目必须要有-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!--                maven 的源代码插件-->
+                <plugin>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <attach>false</attach>
+                    </configuration>
+                </plugin>
+                <!--                版本管理插件-->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>flatten-maven-plugin</artifactId>
+                    <version>1.5.0</version>
+                    <executions>
+                        <execution>
+                            <id>flatten</id>
+                            <phase>process-resources</phase>
+                            <goals>
+                                <goal>flatten</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>flatten.clean</id>
+                            <phase>clean</phase>
+                            <goals>
+                                <goal>clean</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <updatePomFile>true</updatePomFile>
+                        <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                    </configuration>
+                </plugin>
+                <!--            新版本jdk语法支持，Thread.ofVirtual-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                        <release>${maven.compiler.target}</release>
+                    </configuration>
+                </plugin>
+                <!--            打包之前clean-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.3.2</version>
+                    <executions>
+                        <execution>
+                            <id>auto-clean-resources</id>
+                            <phase>initialize</phase> <!-- 在初始化阶段执行 -->
+                            <goals>
+                                <goal>clean</goal>
+                            </goals>
+                            <configuration>
+                                <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                                <filesets>
+                                    <fileset>
+                                        <directory>target/classes</directory> <!-- 清理编译目录 -->
+                                    </fileset>
+                                </filesets>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <!-- 生成源代码-->
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <configuration>
+                    <attach>true</attach>
+                </configuration>
+            </plugin>
+            <!--            版本替换  revision -> 具体的版本号-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+            </plugin>
+            <!--            新版本jdk语法支持，Thread.ofVirtual-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <!--            打包之前clean-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+            </plugin>
+        </plugins>
+        <!--        打包的时候包含下面的文件夹，并且开启环境参数注入-->
+        <resources>
+            <!--            主要的资源目录-->
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <!--            多profile的文件独立存放，可以针对不同的profile下，配置文件存在很大差异的情况下使用-->
+            <resource>
+                <directory>src/main/resources-${profile.active}</directory>
+                <filtering>true</filtering>
+            </resource>
+            <!--            静态资源目录,对应一些前端页面，按照springboot的规则，应该放到static的目录里面，这里单独抽离出来，防止影响上面两个的filter，造成冲突-->
+            <resource>
+                <directory>src/main/static-resources</directory>
+                <targetPath>static</targetPath>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+    </build>
+
+</project>
