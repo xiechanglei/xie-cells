@@ -8,6 +8,6 @@
 
     <!--    模块说明-->
     <tree path="/common/xie-cell-common-lang" title="基础语言模块" icon="ToolwindowsWarningEvents"/>
-<!--    <tree path="/plugin/plugin-build" title="打包插件" icon="ToolwindowsErrorEvents"/>-->
+    <tree path="/plugin/xie-cell-plugin-ap" title="ap插件" icon="ToolwindowsErrorEvents"/>
 <!--    <tree path="/starter/starter-rbac" icon="ToolwindowsInfoEvents"/>-->
 </trees>

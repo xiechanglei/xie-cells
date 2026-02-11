@@ -7,7 +7,7 @@ import lombok.experimental.UtilityClass;
  * 提供常用的字符串操作方法
  */
 @UtilityClass
-public class StringUtils {
+public class StringHelpers {
 
     /**
      * 检查字符串是否为空或null

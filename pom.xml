@@ -27,6 +27,10 @@
         版本号的规则为: springboot的版本号 + . + 项目的版本号
         -->
         <revision>3.5.9.1</revision>
+
+        <!-- 依赖版本管理 -->
+        <auto-service.version>1.1.1</auto-service.version>
+        <javapoet.version>1.13.0</javapoet.version>
     </properties>
 
     <!--    子模块-->
@@ -43,6 +47,21 @@
                 <groupId>io.github.xiechanglei</groupId>
                 <artifactId>xie-cell-common-lang</artifactId>
                 <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.xiechanglei</groupId>
+                <artifactId>xie-cell-plugin-ap</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.auto.service</groupId>
+                <artifactId>auto-service</artifactId>
+                <version>${auto-service.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup</groupId>
+                <artifactId>javapoet</artifactId>
+                <version>${javapoet.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

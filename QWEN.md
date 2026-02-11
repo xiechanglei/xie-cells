@@ -15,27 +15,17 @@
 - 支持 Java 21
 - 已配置 Lombok、单元测试等基础依赖
 
-## 当前进度
-- [x] 项目初始化完成
-- [x] 基础 POM 配置完成 (Spring Boot 3.5.9, Java 21)
-- [x] 项目规范制定完成
-- [x] 根目录文档编写完成（含徽章）
-- [x] 模块命名规范化
-- [x] 分类模块结构建立
-- [x] 分类模块文档编写完成
-- [x] 第一个功能模块创建 (xie-cells-common-lang)
-- [x] 功能模块依赖优化
-- [x] 功能模块包结构建立
-- [x] 创建第一个工具类及测试 (StringUtils)
-- [x] 创建工具类使用文档
-- [x] 模块名称规范化 (xie-cells-common-lang -> xie-cell-common-lang)
-- [ ] 自定义 Starter 设计
-- [ ] 更多功能模块开发
+## 模块包结构说明
+为了便于快速定位源码，以下是已创建模块的包结构映射：
+- xie-cell-common-lang: io.github.xiechanglei.cell.common.lang
+  - 字符串工具: io.github.xiechanglei.cell.common.lang.string
+  - 字节操作工具: io.github.xiechanglei.cell.common.lang.bytes
+  - 日期时间工具: io.github.xiechanglei.cell.common.lang.date
+  - 集合工具: io.github.xiechanglei.cell.common.lang.collection
+  - 数字工具: io.github.xiechanglei.cell.common.lang.number
+  - 其他功能按需创建二级包
+新的包以及模块会根据项目需求逐步添加，保持清晰的包结构有助于代码维护和功能扩展。
 
-## 下一步计划
-1. 继续开发更多工具类 (DateUtils, CollectionUtils, NumberUtils等) 在 xie-cell-common-lang 模块中
-2. 创建相应的测试类和文档
-3. 开发第一个自定义Spring Boot Starter
 
 ## 项目架构与规范
 
@@ -46,20 +36,6 @@
    - 子模块：包含具体实现代码，在README中说明该模块包含的功能
 3. 详细使用手册：在模块目录下创建docs目录，用不同Markdown文件说明各功能使用方式
 4. 示例子模块：xie-cell-common-lang - 提供基础语言级别工具类
-
-### 包结构规范
-- 每个模块的基本包名: io.github.xiechanglei.cell.功能模块名称
-- 通用工具类: io.github.xiechanglei.cell.common.lang
-  - 字符串工具: io.github.xiechanglei.cell.common.lang.string
-  - 日期时间工具: io.github.xiechanglei.cell.common.lang.date
-  - 集合工具: io.github.xiechanglei.cell.common.lang.collection
-  - 数字工具: io.github.xiechanglei.cell.common.lang.number
-  - 其他功能按需创建二级包
-- 自定义Starter: io.github.xiechanglei.cell.starter
-  - Redis相关: io.github.xiechanglei.cell.starter.redis
-  - Elasticsearch相关: io.github.xiechanglei.cell.starter.elasticsearch
-  - 其他功能按需创建二级包
-- 测试代码: io.github.xiechanglei.cell (对应源码结构)
 
 ### 项目模块化规范
 - 采用多层级模块方式组织项目
@@ -73,6 +49,27 @@
 - 在父模块pom.xml中声明所有子模块
 - 在父模块dependencyManagement中统一管理子模块间依赖版本，避免冲突
 
+### 依赖管理规范
+- 所有第三方依赖的版本号应在根目录pom.xml的properties中统一定义
+- 在根目录pom.xml的dependencyManagement部分声明所有依赖的版本
+- 子模块引用依赖时，不需要指定版本号，从父POM继承
+- 依赖版本号命名规范：`{groupId}.{artifactId}.version`，如`com.google.auto.service.version`
+- 依赖管理遵循最小权限原则，只在需要的模块中引入依赖
+
+### 包结构规范
+- 每个模块的基本包名: io.github.xiechanglei.cell.功能模块名称,比如，
+  - 通用工具模块: io.github.xiechanglei.cell.common.lang ，
+  - redis Starter: io.github.xiechanglei.cell.starter.redis
+- 模块下的功能包结构需要创建二级包，命名格式为功能类型，如：
+  - 字符串工具包: io.github.xiechanglei.cell.common.lang.string，
+  - 日期时间工具: io.github.xiechanglei.cell.common.lang.date
+
+### 类命名规范
+- 类名应使用大驼峰命名法，且具有描述性，能够清晰表达类的功能和用途
+- 工具类命名应以Helper结束，如StringHelper、DateHelper等.一般工具类不需要实例化，建议使用interface 的方式实现，工具类中方法过多的时候，可以将功能相关的方法分成不同的接口，然后在统一的工具类中继承这些接口实现集成
+- 配置类命名应以Properties结尾，如RedisProperties、DatabaseProperties等
+- 自动配置类命名应以AutoConfiguration结尾，如RedisAutoConfiguration、DatabaseAutoConfiguration等
+  
 ### Starter开发规范
 - 每个自定义Starter需包含：
   - 配置类 (Configuration Properties)

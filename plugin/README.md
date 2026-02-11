@@ -4,8 +4,7 @@ Maven 插件模块集合，提供各种自定义的 Maven 插件。
 
 ## 子模块
 
-暂无子模块
-
+- xie-cell-plugin-ap - 注解处理器工具集合，提供如@HelperGroup等便捷注解
 
 ## 许可证
 
