@@ -16,6 +16,7 @@
     <description>Common utility modules for Xie-Cells framework</description>
 
     <modules>
+        <module>xie-cell-common-bean</module>
         <module>xie-cell-common-lang</module>
     </modules>
 

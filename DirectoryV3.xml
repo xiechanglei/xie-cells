@@ -7,7 +7,9 @@
     <tree path="/test" title="测试" icon="GeneralTrialBadge" textColor="193,177,228"/>
 
     <!--    模块说明-->
+    <tree path="/common/xie-cell-common-bean" title="bean 模块" icon="ToolwindowsWarningEvents"/>
     <tree path="/common/xie-cell-common-lang" title="基础语言模块" icon="ToolwindowsWarningEvents"/>
     <tree path="/plugin/xie-cell-plugin-ap" title="ap插件" icon="ToolwindowsErrorEvents"/>
-<!--    <tree path="/starter/starter-rbac" icon="ToolwindowsInfoEvents"/>-->
+    <tree path="/starter/xie-cell-starter-spring" title="spring core starter" icon="ToolwindowsInfoEvents"/>
+    <tree path="/starter/xie-cell-starter-web" title="web starter" icon="ToolwindowsInfoEvents"/>
 </trees>

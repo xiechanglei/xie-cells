@@ -11,7 +11,7 @@
 - 根目录: `/home/xie/code-work-space/java/xie-cells`
 - 使用 Maven 进行依赖管理 (pom.xml 存在)
 - 包含 .git 版本控制
-- 已配置 Spring Boot 3.5.9 父项目
+- 已配置 Spring Boot 3.5.10 父项目
 - 支持 Java 21
 - 已配置 Lombok、单元测试等基础依赖
 
@@ -20,10 +20,11 @@
 - xie-cell-common-lang: io.github.xiechanglei.cell.common.lang
   - 字符串工具: io.github.xiechanglei.cell.common.lang.string
   - 字节操作工具: io.github.xiechanglei.cell.common.lang.bytes
-  - 日期时间工具: io.github.xiechanglei.cell.common.lang.date
-  - 集合工具: io.github.xiechanglei.cell.common.lang.collection
-  - 数字工具: io.github.xiechanglei.cell.common.lang.number
-  - 其他功能按需创建二级包
+- xie-cell-common-bean: io.github.xiechanglei.cell.common.bean
+  - 业务异常类: io.github.xiechanglei.cell.common.bean.exception
+  - 消息封装类: io.github.xiechanglei.cell.common.bean.message
+- xie-cell-starter-spring: io.github.xiechanglei.cell.starter.spring
+  - 自定义日志处理: io.github.xiechanglei.cell.starter.spring.log
 新的包以及模块会根据项目需求逐步添加，保持清晰的包结构有助于代码维护和功能扩展。
 
 
@@ -93,12 +94,14 @@
 ### 文档规范
 - Markdown文档中的链接应指向相关文件，如子模块链接到对应README.md
 - 项目采用Apache 2.0许可证（通过在线链接引用）
-- README.md需说明两种使用方式：Parent方式和单独引用方式（仅在根目录README中）
+- 根目录README.md需说明两种使用方式：Parent方式和单独引用方式
 - 分类模块README不包含使用方式说明
-- 功能模块README只需说明单独引用的使用方式
+- 功能模块README只需说明单独引用的使用方式，不得包含Parent方式的说明
 - 根目录README只列出一级子模块，不列出孙子模块
 - README.md应包含版本徽章等常见标识
 - 常见徽章包括：版本、许可证、Java版本、Spring Boot版本等
+- 重要：文档中提及的功能和类必须真实存在，不得虚构或假设尚未实现的功能
+- 重要：功能模块的README中不应包含业务逻辑无关的自动配置类说明
 
 ## 决策权说明
 

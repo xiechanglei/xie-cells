@@ -2,24 +2,23 @@ package io.github.xiechanglei.cell.common.lang.bytes;
 
 /**
  * 字节数组工具类
- * 提供字节数组转换和操作的静态方法
- * 该类聚合了ByteArrayConvertor（转换功能）和ActionsForByteArray（操作功能）的功能
- * 通过此类可以访问所有的字节数组相关工具方法
  *
  * @author xie
  * @date 2026/2/11
  */
-public class ByteArrayHelper {
-    
-    // 从ByteArrayConvertor继承的方法（实际上是委托调用）
+public interface ByteArrayHelper {
     /**
      * 构建字节数组，将整数数组转换为字节数组
      *
      * @param bytes 整数形式的字节值数组
      * @return 转换后的字节数组
      */
-    public static byte[] build(int... bytes) {
-        return ByteArrayConvertor.build(bytes);
+    static byte[] build(int... bytes) {
+        byte[] result = new byte[bytes.length];
+        for (int i = 0; i < bytes.length; i++) {
+            result[i] = (byte) bytes[i];
+        }
+        return result;
     }
 
     /**
@@ -30,8 +29,23 @@ public class ByteArrayHelper {
      * @return 转换后的字节数组
      * @throws IllegalArgumentException 如果十六进制字符串长度不是偶数
      */
-    public static byte[] hexToByteArray(String hexString) {
-        return ByteArrayConvertor.hexToByteArray(hexString);
+    static byte[] hexToByteArray(String hexString) {
+        if (hexString == null) {
+            return new byte[0];
+        }
+        hexString = hexString.replaceAll("[\\s\r]+", "");
+        if (hexString.isEmpty()) {
+            return new byte[0];
+        }
+        if (hexString.length() % 2 != 0) {
+            throw new IllegalArgumentException("hexString length must be even");
+        }
+        byte[] result = new byte[hexString.length() / 2];
+        char[] charArray = hexString.toCharArray();
+        for (int i = 0; i < hexString.length(); i += 2) {
+            result[i / 2] = (byte) Integer.parseInt(new String(new char[]{charArray[i], charArray[i + 1]}), 16);
+        }
+        return result;
     }
 
     /**
@@ -40,8 +54,8 @@ public class ByteArrayHelper {
      * @param bytes 待转换的字节数组
      * @return 表示字节数组的十六进制字符串
      */
-    public static String toHexString(byte[] bytes) {
-        return ByteArrayConvertor.toHexString(bytes);
+    static String toHexString(byte[] bytes) {
+        return toHexString(bytes, 0, bytes.length);
     }
 
     /**
@@ -51,8 +65,8 @@ public class ByteArrayHelper {
      * @param end   结束索引（不包含）
      * @return 表示字节数组前end个元素的十六进制字符串
      */
-    public static String toHexString(byte[] bytes, int end) {
-        return ByteArrayConvertor.toHexString(bytes, end);
+    static String toHexString(byte[] bytes, int end) {
+        return toHexString(bytes, 0, end);
     }
 
     /**
@@ -63,12 +77,15 @@ public class ByteArrayHelper {
      * @param end   结束索引（不包含）
      * @return 表示字节数组指定范围内元素的十六进制字符串
      */
-    public static String toHexString(byte[] bytes, int start, int end) {
-        return ByteArrayConvertor.toHexString(bytes, start, end);
-    }
-    
-    // 私有构造函数防止实例化
-    private ByteArrayHelper() {
-        // 工具类不需要实例化
+    static String toHexString(byte[] bytes, int start, int end) {
+        if (bytes == null || bytes.length == 0) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        end = Math.min(end, bytes.length);
+        for (int i = start; i < end; i++) {
+            sb.append(ByteHelper.byteToHex(bytes[i]));
+        }
+        return sb.toString();
     }
 }

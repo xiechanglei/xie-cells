@@ -6,18 +6,13 @@
 
     <parent>
         <groupId>io.github.xiechanglei</groupId>
-        <artifactId>xie-cells-parent</artifactId>
+        <artifactId>xie-cells-common</artifactId>
         <version>${revision}</version>
     </parent>
 
-    <artifactId>xie-cells-starter</artifactId>
-    <packaging>pom</packaging>
-    <name>Xie-Cells Starter Modules</name>
-    <description>Spring Boot starter modules for Xie-Cells framework</description>
+    <artifactId>xie-cell-common-bean</artifactId>
+    <name>Xie-Cells Common Bean Module</name>
+    <description>Manager beans for Xie-Cells framework</description>
 
-    <modules>
-        <module>xie-cell-starter-web</module>
-        <module>xie-cell-starter-spring</module>
-    </modules>
 
 </project>

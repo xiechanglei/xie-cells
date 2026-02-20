@@ -5,6 +5,7 @@
 ## 子模块
 
 - [xie-cell-common-lang](./xie-cell-common-lang/README.md) - 通用语言级别工具类
+- [xie-cell-common-bean](./xie-cell-common-bean/README.md) - Bean管理相关工具类
 
 ## 许可证
 

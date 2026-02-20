@@ -7,7 +7,7 @@
     <parent>
         <artifactId>spring-boot-starter-parent</artifactId>
         <groupId>org.springframework.boot</groupId>
-        <version>3.5.9</version>
+        <version>3.5.10</version>
     </parent>
 
 
@@ -26,11 +26,16 @@
         <!-- 定义一个全局的版本号码，减少维护版本号码的成本,
         版本号的规则为: springboot的版本号 + . + 项目的版本号
         -->
-        <revision>3.5.9.1</revision>
+        <revision>3.5.10.1</revision>
 
         <!-- 依赖版本管理 -->
         <auto-service.version>1.1.1</auto-service.version>
         <javapoet.version>1.13.0</javapoet.version>
+
+        <!--   修复ce漏洞的版本管理-->
+        <!--        <undertow.version>2.3.22.Final</undertow.version>-->
+<!--                <logback.version>1.5.29</logback.version>-->
+<!--                <assertj.version>3.27.7</assertj.version>-->
     </properties>
 
     <!--    子模块-->
@@ -45,7 +50,23 @@
         <dependencies>
             <dependency>
                 <groupId>io.github.xiechanglei</groupId>
+                <artifactId>xie-cell-common-bean</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.xiechanglei</groupId>
                 <artifactId>xie-cell-common-lang</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.xiechanglei</groupId>
+                <artifactId>xie-cell-starter-spring</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.xiechanglei</groupId>
+                <artifactId>xie-cell-starter-web</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
