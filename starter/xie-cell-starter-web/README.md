@@ -11,6 +11,10 @@ Web 功能 Starter，提供 Web 应用的基础配置和扩展功能，基于 Sp
 - **WebSocket 支持** - 集成 WebSocket 双向通信能力
 - **参数验证支持** - 提供 Bean Validation 验证支持
 - **Undertow 容器** - 使用高性能 Undertow 替代默认 Tomcat
+- **资源响应工具** - 支持文件下载和媒体资源预览（图片/视频/音频）
+- **范围请求支持** - 支持 HTTP 206 Partial Content（视频拖拽、断点续传）
+- **缓存验证支持** - 支持 HTTP 304 Not Modified（减少不必要传输）
+- **自动分段下载** - 文件超过阈值时自动启用范围请求支持
 
 ## 使用方式
 
@@ -106,7 +110,149 @@ public class OrderController {
 }
 ```
 
-### 3. 流式输出支持
+### 3. 资源响应工具
+
+#### 文件下载模式
+
+```java
+@RestController
+@RequestMapping("/api")
+public class FileController {
+    
+    @GetMapping("/download/{id}")
+    public ResponseEntity<?> download(@PathVariable Long id) {
+        File file = getFileById(id); // 获取文件
+        ResourceInfo info = ResourceInfo.withFile(file);
+        return ResourceResponseHelper.useResource(info);
+    }
+}
+```
+
+#### 媒体资源预览模式（图片/视频/音频）
+
+```java
+@RestController
+@RequestMapping("/api")
+public class MediaController {
+    
+    @GetMapping("/image/{id}")
+    public ResponseEntity<?> getImage(@PathVariable Long id) {
+        File file = getImageById(id); // 获取图片文件
+        ResourceInfo info = ResourceInfo.withFile(file);
+        return ResourceResponseHelper.useMedia(info);
+    }
+    
+    @GetMapping("/video/{id}")
+    public ResponseEntity<?> getVideo(@PathVariable Long id) {
+        File file = getVideoById(id); // 获取视频文件
+        ResourceInfo info = ResourceInfo.withFile(file);
+        return ResourceResponseHelper.useMedia(info);
+    }
+}
+```
+
+#### 304 缓存验证
+
+`useMedia` 方法自动支持 HTTP 304 Not Modified 响应：
+
+**工作原理：**
+1. 首次请求：服务器返回完整资源，并在响应头中包含 `Last-Modified`
+2. 后续请求：浏览器发送 `If-Modified-Since` 头（值为上次收到的 Last-Modified）
+3. 服务器比较：如果资源未修改，返回 304 Not Modified（无响应体）
+4. 如果资源已修改，返回 200 OK 和新资源
+
+```java
+@RestController
+@RequestMapping("/api")
+public class MediaController {
+    
+    @GetMapping("/image/{id}")
+    public ResponseEntity<?> getImage(@PathVariable Long id) {
+        File file = getImageById(id);
+        ResourceInfo info = ResourceInfo.withFile(file);
+        // 自动处理 304 缓存验证
+        return ResourceResponseHelper.useMedia(info);
+    }
+}
+```
+
+**前端效果：**
+```javascript
+// 首次请求
+fetch('/api/image/123').then(response => {
+    console.log(response.status); // 200
+    console.log(response.headers.get('Last-Modified')); // "Wed, 21 Oct 2015 07:28:00 GMT"
+});
+
+// 后续请求（浏览器自动添加 If-Modified-Since 头）
+// 如果资源未修改，服务器返回 304，浏览器使用本地缓存
+fetch('/api/image/123').then(response => {
+    console.log(response.status); // 304
+});
+```
+
+#### 范围请求支持（HTTP 206）
+
+`useMedia` 和 `useResource` 方法自动支持 HTTP Range 请求头，实现：
+- 视频拖拽播放
+- 断点续传下载
+- 分片加载
+
+**分段下载阈值：**
+- 默认阈值：10MB（文件超过 10MB 时自动启用范围请求支持）
+- 可自定义阈值：通过方法的 `rangeThreshold` 参数设置
+
+```java
+// 使用默认阈值（10MB）
+@GetMapping("/video/{id}")
+public ResponseEntity<?> getVideo(@PathVariable Long id) {
+    File file = getVideoById(id);
+    ResourceInfo info = ResourceInfo.withFile(file);
+    return ResourceResponseHelper.useMedia(info);
+}
+
+// 自定义阈值（5MB）
+@GetMapping("/large-video/{id}")
+public ResponseEntity<?> getLargeVideo(@PathVariable Long id) {
+    File file = getVideoById(id);
+    ResourceInfo info = ResourceInfo.withFile(file);
+    // 文件超过 5MB 时启用范围请求支持
+    return ResourceResponseHelper.useMedia(info, 5 * 1024 * 1024);
+}
+
+// 禁用分段下载（阈值设为 0）
+@GetMapping("/small-video/{id}")
+public ResponseEntity<?> getSmallVideo(@PathVariable Long id) {
+    File file = getVideoById(id);
+    ResourceInfo info = ResourceInfo.withFile(file);
+    // 禁用范围请求支持
+    return ResourceResponseHelper.useMedia(info, 0);
+}
+```
+
+同时支持 304 缓存验证，减少不必要的传输。
+
+前端使用示例：
+
+```javascript
+// 视频标签自动使用范围请求
+<video controls>
+    <source src="/api/video/123" type="video/mp4">
+</video>
+
+// 或使用 fetch API 手动请求范围
+fetch('/api/video/123', {
+    headers: {
+        'Range': 'bytes=0-1048575' // 请求前 1MB
+    }
+}).then(response => {
+    if (response.status === 206) {
+        console.log('支持范围请求');
+    }
+});
+```
+
+### 5. 流式输出支持
 
 #### SSE (Server-Sent Events)
 
@@ -172,7 +318,7 @@ public ResponseEntity<StreamingResponseBody> streamBody() {
 }
 ```
 
-### 4. WebSocket 支持
+### 6. WebSocket 支持
 
 ```java
 @Configuration
@@ -210,8 +356,9 @@ io.github.xiechanglei.cell.starter.web
 │   ├── CellWebCrossConfigProperties.java
 │   └── CellWebCrossOriginConfiguration.java
 ├── resoure/                     # 资源响应工具
-│   ├── ResourceInfo.java
-│   └── ResourceResponseHelper.java
+│   ├── ResourceInfo.java            # 资源说明类
+│   ├── ResourceResponseHelper.java  # 资源响应辅助类（支持下载/预览/范围请求/304 缓存）
+│   └── ResourceMediaType.java       # 媒体类型枚举（图片/视频/音频等）
 └── CellWebAutoConfiguration.java
 ```
 

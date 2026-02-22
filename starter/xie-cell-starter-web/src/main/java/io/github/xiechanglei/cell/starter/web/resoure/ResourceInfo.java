@@ -1,7 +1,6 @@
 package io.github.xiechanglei.cell.starter.web.resoure;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.core.io.FileSystemResource;
@@ -9,48 +8,34 @@ import org.springframework.core.io.Resource;
 
 import java.io.File;
 
-/**
- * 资源说明
- *
- * @author xie
- * @date 2026/2/12
- */
-
-@RequiredArgsConstructor
-@Accessors(fluent = true, chain = true)
 @Getter
 @Setter
+@Accessors(fluent = true, chain = true)
 public class ResourceInfo {
+
     Resource resource;
     private String resourceName;
+    private ResourceMediaType mediaType;
+    private long rangeSize= 1024 * 1024 * 10;
+    private boolean inline = true;
 
-    /**
-     * 使用文件创建资源说明
-     *
-     * @param file 资源文件
-     * @return 资源说明
-     */
+    public ResourceInfo() {
+    }
+
     public static ResourceInfo withFile(File file) {
         ResourceInfo resourceInfo = new ResourceInfo();
         if (file != null) {
-            resourceInfo.resource(new FileSystemResource(file)).resourceName(file.getName());
+            resourceInfo.resource(new FileSystemResource(file))
+                    .resourceName(file.getName())
+                    .mediaType(ResourceMediaType.fromFilename(file.getName()));
         }
         return resourceInfo;
     }
 
-    /**
-     * 使用文件路径创建资源说明
-     *
-     * @param filePath 资源文件路径
-     * @return 资源说明
-     */
     public static ResourceInfo withFilePath(String filePath) {
         if (filePath == null) {
             return new ResourceInfo();
         }
         return withFile(new File(filePath));
-    }
-
-    public static void main(String[] args) {
     }
 }
