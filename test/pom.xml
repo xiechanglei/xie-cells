@@ -10,15 +10,11 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>xie-cells-common</artifactId>
-    <packaging>pom</packaging>
-    <name>Xie-Cells Common Modules</name>
-    <description>Common utility modules for Xie-Cells framework</description>
+    <artifactId>test-cells</artifactId>
 
+    <packaging>pom</packaging>
     <modules>
-        <module>xie-cell-common-bean</module>
-        <module>xie-cell-common-lang</module>
-        <module>xie-cell-common-jpa-bean</module>
+        <module>test-web</module>
     </modules>
 
 </project>

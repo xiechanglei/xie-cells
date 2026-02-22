@@ -31,11 +31,12 @@
         <!-- 依赖版本管理 -->
         <auto-service.version>1.1.1</auto-service.version>
         <javapoet.version>1.13.0</javapoet.version>
+        <uuid-generator.version>5.1.0</uuid-generator.version>
 
         <!--   修复ce漏洞的版本管理-->
         <!--        <undertow.version>2.3.22.Final</undertow.version>-->
-<!--                <logback.version>1.5.29</logback.version>-->
-<!--                <assertj.version>3.27.7</assertj.version>-->
+        <!--                <logback.version>1.5.29</logback.version>-->
+        <assertj.version>3.27.7</assertj.version>
     </properties>
 
     <!--    子模块-->
@@ -43,6 +44,7 @@
         <module>common</module>
         <module>starter</module>
         <module>plugin</module>
+        <module>test</module>
     </modules>
 
     <!--全局依赖版本管理-->
@@ -61,6 +63,12 @@
 
             <dependency>
                 <groupId>io.github.xiechanglei</groupId>
+                <artifactId>xie-cell-common-jpa-bean</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.xiechanglei</groupId>
                 <artifactId>xie-cell-starter-spring</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -74,6 +82,15 @@
                 <artifactId>xie-cell-plugin-ap</artifactId>
                 <version>${revision}</version>
             </dependency>
+
+
+            <!--            uuidcreator-->
+            <dependency>
+                <groupId>com.fasterxml.uuid</groupId>
+                <artifactId>java-uuid-generator</artifactId>
+                <version>${uuid-generator.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>com.google.auto.service</groupId>
                 <artifactId>auto-service</artifactId>

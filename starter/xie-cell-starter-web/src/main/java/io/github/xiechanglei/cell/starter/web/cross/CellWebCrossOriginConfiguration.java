@@ -20,7 +20,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * 如果此跨域功能不能满足对应的需求,可以关闭此功能,使用其他方式解决跨域问题
  */
 @Log4j2
-@Component("toolsWebCrossOriginConfiguration")
+@Component
 @RequiredArgsConstructor
 @ConditionalOnProperty(prefix = "cell.web.cross", name = "enable", havingValue = "true", matchIfMissing = true)
 public class CellWebCrossOriginConfiguration implements WebMvcConfigurer {

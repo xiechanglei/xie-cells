@@ -9,24 +9,51 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.util.Objects;
 
 /**
- * 实用工具类，用于获取当前 HTTP 请求和请求的 IP 地址。
- * 提供了静态方法来获取请求对象以及解析请求的 IP 地址，
- * 其中包括处理代理服务器可能带来的 IP 地址变化。
+ * HTTP 请求处理工具类
+ * <p>
+ * 提供了一系列静态方法用于在当前请求上下文中获取 HTTP 请求相关信息，包括：
+ * </p>
+ * <ul>
+ * <li>获取当前 HTTP 请求对象 {@link HttpServletRequest}</li>
+ * <li>获取当前 HTTP 响应对象 {@link HttpServletResponse}</li>
+ * <li>获取客户端 IP 地址（支持代理服务器场景）</li>
+ * <li>获取 Cookie 值</li>
+ * </ul>
+ * <p>
+ * 该类依赖于 Spring 的 {@link RequestContextHolder} 来获取当前线程绑定的请求上下文，
+ * 因此只能在 Web 请求处理线程中调用。
+ * </p>
+ *
+ * @author xie
+ * @date 2026/2/22
  */
 public class RequestHandler {
     /**
      * 获取当前 HTTP 请求对象。
      * <p>
-     * 该方法从 Spring 的 `RequestContextHolder` 中获取当前的 `ServletRequestAttributes`，
-     * 然后提取 `HttpServletRequest` 对象。如果没有找到请求上下文或请求对象为空，
-     * 则会抛出 `NullPointerException`。
+     * 该方法从 Spring 的 {@link RequestContextHolder} 中获取当前的 {@link ServletRequestAttributes}，
+     * 然后提取 {@link HttpServletRequest} 对象。如果没有找到请求上下文或请求对象为空，
+     * 则会抛出 {@link NullPointerException}。
+     * </p>
      *
-     * @return 当前的 `HttpServletRequest` 对象
+     * @return 当前的 {@link HttpServletRequest} 对象
+     * @throws NullPointerException 当请求上下文为空或请求对象为空时抛出
      */
     public static HttpServletRequest getCurrentRequest() {
         return ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
     }
 
+    /**
+     * 获取当前 HTTP 响应对象。
+     * <p>
+     * 该方法从 Spring 的 {@link RequestContextHolder} 中获取当前的 {@link ServletRequestAttributes}，
+     * 然后提取 {@link HttpServletResponse} 对象。如果没有找到请求上下文或响应对象为空，
+     * 则会抛出 {@link NullPointerException}。
+     * </p>
+     *
+     * @return 当前的 {@link HttpServletResponse} 对象
+     * @throws NullPointerException 当请求上下文为空或响应对象为空时抛出
+     */
     public static HttpServletResponse getCurrentResponse() {
         return ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getResponse();
     }
@@ -34,11 +61,14 @@ public class RequestHandler {
     /**
      * 获取当前请求方的 IP 地址。
      * <p>
-     * 该方法首先尝试从 HTTP 头部中的 `x-forwarded-for` 获取客户端 IP 地址，
-     * 该头部通常用于在代理服务器后面时传递原始 IP 地址。如果该头部为空或无效，
-     * 则尝试从其他常见的代理头部中获取 IP 地址，包括 `Proxy-Client-IP` 和 `WL-Proxy-Client-IP`。
-     * 如果所有这些头部都没有提供有效的 IP 地址，则返回 `request.getRemoteAddr()`，
-     * 该方法提供的是直接连接到服务器的 IP 地址。
+     * 该方法按照以下优先级尝试获取客户端真实 IP 地址：
+     * <ol>
+     * <li>首先从 HTTP 头部中的 {@code x-forwarded-for} 获取，该头部通常用于在代理服务器后面时传递原始 IP 地址</li>
+     * <li>如果无效，则尝试从 {@code Proxy-Client-IP} 头部获取</li>
+     * <li>如果仍无效，则尝试从 {@code WL-Proxy-Client-IP} 头部获取</li>
+     * <li>如果所有头部都无效，则返回 {@code request.getRemoteAddr()}，即直接连接到服务器的 IP 地址</li>
+     * </ol>
+     * </p>
      *
      * @return 请求方的 IP 地址，可能是直接 IP 地址或经过代理的 IP 地址
      */
@@ -62,10 +92,11 @@ public class RequestHandler {
      * <p>
      * 该方法遍历请求中所有的 Cookie，查找名称匹配的 Cookie。如果找到匹配的 Cookie，
      * 则返回其值；如果没有找到或请求中没有 Cookie，则返回 null。
+     * </p>
      *
-     * @param request 当前的 HTTP 请求对象，用于获取请求中的 Cookie。
-     * @param key     要查找的 Cookie 名称。
-     * @return 如果找到匹配的 Cookie，则返回其值；否则返回 null。
+     * @param request 当前的 HTTP 请求对象，用于获取请求中的 Cookie
+     * @param key     要查找的 Cookie 名称
+     * @return 如果找到匹配的 Cookie，则返回其值；否则返回 null
      */
     public static String getCookie(HttpServletRequest request, String key) {
         Cookie[] cookies = request.getCookies();
@@ -80,10 +111,16 @@ public class RequestHandler {
     }
 
     /**
-     * 提供给一些不方便传递 request 的地方使用，从当前请求中获取指定的cookie
+     * 从当前请求上下文中获取指定名称的 Cookie 值。
+     * <p>
+     * 该方法适用于不方便传递 {@link HttpServletRequest} 对象的场景，
+     * 内部通过 {@link #getCurrentRequest()} 获取当前请求对象。
+     * </p>
      *
-     * @param key
-     * @return
+     * @param key Cookie 的名称
+     * @return 如果找到匹配的 Cookie 则返回其值，否则返回 null
+     * @see #getCurrentRequest()
+     * @see #getCookie(HttpServletRequest, String)
      */
     public static String getCookie(String key) {
         Cookie[] cookies = getCurrentRequest().getCookies();

@@ -6,16 +6,13 @@
 
     <parent>
         <groupId>io.github.xiechanglei</groupId>
-        <artifactId>xie-cells-parent</artifactId>
+        <artifactId>test-cells</artifactId>
         <version>${revision}</version>
-        <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>test-4-web</artifactId>
-
+    <artifactId>test-web</artifactId>
 
     <dependencies>
-
         <dependency>
             <groupId>io.github.xiechanglei</groupId>
             <artifactId>xie-cell-starter-web</artifactId>
