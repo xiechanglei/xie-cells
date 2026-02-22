@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /**
@@ -91,4 +92,12 @@ public class CellWebExceptionAdvice {
         return WebResult.failed(e.getMessage());
     }
 
+
+    /**
+     * 链接被重置异常，通常是由于客户端在请求过程中断开连接导致的。
+     * 该异常通常不需要特殊处理，可以直接忽略，避免在日志中记录过多无意义的错误信息。
+     */
+    @ExceptionHandler(value = AsyncRequestNotUsableException.class)
+    public void handleSocketException(AsyncRequestNotUsableException e) {
+    }
 }

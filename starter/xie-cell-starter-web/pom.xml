@@ -45,6 +45,12 @@
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
 
+        <!-- spring data相关Bean支持，主要是page对象以及sort的解析以及序列化需要用到 -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+        </dependency>
+
         <!--        web flux 返回支持-->
         <dependency>
             <groupId>io.projectreactor</groupId>

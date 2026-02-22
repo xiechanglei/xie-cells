@@ -58,6 +58,7 @@ public class RangeResource implements Resource {
     public long lastModified() throws IOException {
         return source.lastModified();
     }
+
     @Override
     public Resource createRelative(String relativePath) throws IOException {
         return source.createRelative(relativePath);
@@ -76,7 +77,6 @@ public class RangeResource implements Resource {
     @Override
     public InputStream getInputStream() throws IOException {
         InputStream inputStream = source.getInputStream();
-        inputStream.skip(start);
-        return new LimitedInputStream(inputStream, length);
+        return new LimitedInputStream(inputStream, start, length);
     }
 }
