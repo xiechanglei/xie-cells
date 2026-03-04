@@ -11,6 +11,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 
 /**
  * 资源响应辅助类，用于 Web 请求中的文件输出
@@ -29,6 +32,16 @@ import java.nio.charset.StandardCharsets;
  * @date 2026/2/12
  */
 public class CellResourceResponseHandler {
+
+    /**
+     * 使用文件路径响应
+     *
+     * @param filePath 资源文件路径
+     * @return 响应实体
+     */
+    public static ResponseEntity<?> useFile(String filePath) {
+        return useResource(ResourceInfo.withFilePath(filePath));
+    }
 
     /**
      * 使用资源说明进行响应（下载模式，自定义分段阈值）
@@ -101,6 +114,14 @@ public class CellResourceResponseHandler {
         return new ResponseEntity<>(rangeResource, headers, HttpStatus.PARTIAL_CONTENT);
     }
 
+    /**
+     * 写入文件响应头
+     *
+     * @param resourceInfo 资源说明
+     * @param lastModified 资源最后修改时间
+     * @param rangeLength  响应内容长度（范围请求时为范围长度，完整请求时为资源总长度）
+     * @param headers      响应头对象，方法内会添加必要的头信息
+     */
     private static void buildHeader(ResourceInfo resourceInfo, long lastModified, long rangeLength, HttpHeaders headers) {
         headers.add(HttpHeaders.CONTENT_TYPE, getMimeType(resourceInfo));
         headers.add(HttpHeaders.CONTENT_LENGTH, String.valueOf(rangeLength));
@@ -138,27 +159,40 @@ public class CellResourceResponseHandler {
     private static String getIfModifiedSince() {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (attributes != null) {
-            return attributes.getRequest().getHeader("If-Modified-Since");
+            return attributes.getRequest().getHeader(HttpHeaders.IF_MODIFIED_SINCE);
         }
         return null;
     }
 
     /**
-     * 解析 If-Modified-Since 头
+     * 解析 If-Modified-Since 头（支持 RFC 1123 格式和毫秒时间戳）
      */
     private static long parseIfModifiedSince(String ifModifiedSince) {
         try {
+            // 先尝试直接解析毫秒时间戳（兼容旧格式）
             return Long.parseLong(ifModifiedSince);
         } catch (NumberFormatException e) {
-            return 0;
+            // 尝试解析 RFC 1123 格式
+            try {
+                return Instant.from(DateTimeFormatter.RFC_1123_DATE_TIME.parse(ifModifiedSince))
+                        .toEpochMilli();
+            } catch (Exception ex) {
+                return 0;
+            }
         }
     }
 
     /**
-     * 格式化 Last-Modified 头
+     * 格式化 Last-Modified 头为 RFC 1123 格式
+     * <p>
+     * 例如：Wed, 21 Oct 2015 07:28:00 GMT
+     * </p>
+     *
+     * @param lastModified 毫秒时间戳
+     * @return RFC 1123 格式的日期字符串
      */
     private static String formatLastModified(long lastModified) {
-        return String.valueOf(lastModified);
+        return DateTimeFormatter.RFC_1123_DATE_TIME.format(Instant.ofEpochMilli(lastModified).atOffset(ZoneOffset.UTC));
     }
 
     /**

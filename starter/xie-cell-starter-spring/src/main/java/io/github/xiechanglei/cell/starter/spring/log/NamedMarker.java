@@ -18,14 +18,14 @@ public class NamedMarker implements Marker {
     private final String name;
     private final List<Marker> references = new ArrayList<>();
 
-    private static Map<String, NamedMarker> markerCache = new HashMap<>();
+    private static final Map<String, NamedMarker> markerCache = new HashMap<>();
 
     /**
      * 获取一个NamedMarker实例，使用缓存避免重复创建
      * @param name marker的名称
      * @return NamedMarker实例
      */
-    public static NamedMarker of(String name) {
+    public static Marker of(String name) {
         return markerCache.computeIfAbsent(name, NamedMarker::new);
     }
 

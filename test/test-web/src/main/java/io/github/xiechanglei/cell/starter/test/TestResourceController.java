@@ -1,7 +1,7 @@
 package io.github.xiechanglei.cell.starter.test;
 
 import io.github.xiechanglei.cell.starter.web.resoure.CellResourceResponseHandler;
-import io.github.xiechanglei.cell.starter.web.resoure.ResourceInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,10 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2026/2/22
  */
 @RestController
+@Slf4j
 public class TestResourceController {
 
     @RequestMapping("/test/resource")
     public ResponseEntity<?> testResource() {
-        return CellResourceResponseHandler.useResource(ResourceInfo.withFilePath("/home/xie/movie/06. 框架-vue从入门到手撕.mp4"));
+        return CellResourceResponseHandler.useFile("/home/xie/图片/v2-d7df064e60173084053c37b30cd8f21d_r.jpg");
     }
 }

@@ -11,6 +11,7 @@
     <tree path="/common/xie-cell-common-lang" title="基础语言模块" icon="ToolwindowsWarningEvents"/>
     <tree path="/common/xie-cell-common-jpa-bean" title="Jpa 基础bean模块" icon="ToolwindowsWarningEvents"/>
     <tree path="/plugin/xie-cell-plugin-ap" title="ap插件" icon="ToolwindowsErrorEvents"/>
+    <tree path="/starter/xie-cell-starter-jpa" title="spring core starter" icon="ToolwindowsInfoEvents"/>
     <tree path="/starter/xie-cell-starter-spring" title="spring core starter" icon="ToolwindowsInfoEvents"/>
     <tree path="/starter/xie-cell-starter-web" title="web starter" icon="ToolwindowsInfoEvents"/>
 </trees>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.github.xiechanglei</groupId>
+        <artifactId>xie-cells-starter</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>xie-cell-starter-jpa</artifactId>
+    <name>Xie-Cells jpa starter Module</name>
+    <description>spring boot starter of jpa for Xie-Cells framework</description>
+
+
+    <dependencies>
+        <!--        导入jpa bean基础模块-->
+        <dependency>
+            <groupId>io.github.xiechanglei</groupId>
+            <artifactId>xie-cell-common-jpa-bean</artifactId>
+        </dependency>
+        <!--        导入spring的jpa模块-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <!--        默认导入spring starter-->
+        <dependency>
+            <groupId>io.github.xiechanglei</groupId>
+            <artifactId>xie-cell-starter-spring</artifactId>
+        </dependency>
+    </dependencies>
+
+
+</project>
