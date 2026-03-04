@@ -26,6 +26,10 @@
             <groupId>io.github.xiechanglei</groupId>
             <artifactId>xie-cell-common-lang</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.github.xiechanglei</groupId>
+            <artifactId>xie-cell-common-bean</artifactId>
+        </dependency>
         <!--        导入spring的jpa模块-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

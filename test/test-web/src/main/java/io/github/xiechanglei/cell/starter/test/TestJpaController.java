@@ -1,6 +1,7 @@
 package io.github.xiechanglei.cell.starter.test;
 
-import io.github.xiechanglei.cell.starter.jpa.auto.annotation.FindById;
+import io.github.xiechanglei.cell.starter.jpa.auto.base.EntityClass;
+import io.github.xiechanglei.cell.starter.jpa.auto.task.FindById;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,10 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @Slf4j
+@EntityClass(value = TestTable.class, name = "用户")
 public class TestJpaController {
 
-    @RequestMapping("/test/jpa/findById")
     @FindById
-    public void findById() {
-    }
+    @RequestMapping("/test/jpa/findById")
+    public TestTable findById(String id) {return null;}
 }

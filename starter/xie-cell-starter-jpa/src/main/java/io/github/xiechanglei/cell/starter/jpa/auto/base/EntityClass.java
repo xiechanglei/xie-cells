@@ -1,4 +1,4 @@
-package io.github.xiechanglei.cell.starter.jpa.auto.annotation;
+package io.github.xiechanglei.cell.starter.jpa.auto.base;
 
 import java.lang.annotation.*;
 
@@ -11,5 +11,13 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EntityClass {
+    /**
+     * Jpa 实体类
+     */
     Class<?> value();
+
+    /**
+     * 实体类的名称,主要用于生成异常的时候使用，如果不指定，则使用默认的名称
+     */
+    String name() default "资源";
 }
