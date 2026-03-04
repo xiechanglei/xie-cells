@@ -33,15 +33,6 @@ Web 功能 Starter，提供 Web 应用的基础配置和扩展功能，基于 Sp
 </dependency>
 ```
 
-## 配置说明
-
-| 配置前缀 | 功能说明 |
-|---------|---------|
-| `cell.web.advice` | 响应封装和全局异常处理配置 |
-| `cell.web.cross` | 跨域访问配置 |
-| `cell.web.resolver` | 自定义参数解析器配置 |
-| `cell.web.log` | API 日志记录配置 |
-
 ## 详细文档
 
 - [全局响应封装与异常处理](docs/response-advice.md)

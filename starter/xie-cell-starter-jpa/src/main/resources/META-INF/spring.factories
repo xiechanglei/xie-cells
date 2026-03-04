@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=io.github.xiechanglei.cell.starter.spring.CellSpringAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=io.github.xiechanglei.cell.starter.jpa.CellJpaAutoConfiguration

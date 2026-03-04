@@ -32,6 +32,7 @@
         <auto-service.version>1.1.1</auto-service.version>
         <javapoet.version>1.13.0</javapoet.version>
         <uuid-generator.version>5.1.0</uuid-generator.version>
+        <data-base-proxy.version>1.12.1</data-base-proxy.version>
 
         <!--   修复ce漏洞的版本管理-->
         <!--        <undertow.version>2.3.22.Final</undertow.version>-->
@@ -105,6 +106,12 @@
                 <groupId>com.squareup</groupId>
                 <artifactId>javapoet</artifactId>
                 <version>${javapoet.version}</version>
+            </dependency>
+            <!--sql inteceptor-->
+            <dependency>
+                <groupId>com.github.gavlyukovskiy</groupId>
+                <artifactId>datasource-proxy-spring-boot-starter</artifactId>
+                <version>${data-base-proxy.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

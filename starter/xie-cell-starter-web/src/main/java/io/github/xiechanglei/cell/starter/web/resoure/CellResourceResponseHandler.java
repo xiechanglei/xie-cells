@@ -28,6 +28,9 @@ import java.time.format.DateTimeFormatter;
  * - HTTP 304 Not Modified 缓存验证
  * </p>
  *
+ *
+ * todo: 处理一些额外的请求参数，比如：
+ * 1. 缩略图，height,width，quality 等参数，生成缩略图并响应
  * @author xie
  * @date 2026/2/12
  */

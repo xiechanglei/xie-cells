@@ -21,6 +21,11 @@
             <groupId>io.github.xiechanglei</groupId>
             <artifactId>xie-cell-common-jpa-bean</artifactId>
         </dependency>
+        <!--        导入基础模块，需要用到一些函数-->
+        <dependency>
+            <groupId>io.github.xiechanglei</groupId>
+            <artifactId>xie-cell-common-lang</artifactId>
+        </dependency>
         <!--        导入spring的jpa模块-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -30,6 +35,11 @@
         <dependency>
             <groupId>io.github.xiechanglei</groupId>
             <artifactId>xie-cell-starter-spring</artifactId>
+        </dependency>
+        <!--        代理sql执行-->
+        <dependency>
+            <groupId>com.github.gavlyukovskiy</groupId>
+            <artifactId>datasource-proxy-spring-boot-starter</artifactId>
         </dependency>
     </dependencies>
 
