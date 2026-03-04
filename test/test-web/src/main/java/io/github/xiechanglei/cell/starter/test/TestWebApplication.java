@@ -2,6 +2,7 @@ package io.github.xiechanglei.cell.starter.test;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 /**
  * 测试web相关的功能，主要是测试starter/xie-cell-starter-web模块中的功能
@@ -10,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @date 2026/2/22
  */
 @SpringBootApplication
+@EntityScan
 public class TestWebApplication {
     public static void main(String[] args) {
         SpringApplication.run(TestWebApplication.class, args);

@@ -17,6 +17,16 @@
             <groupId>io.github.xiechanglei</groupId>
             <artifactId>xie-cell-starter-web</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.github.xiechanglei</groupId>
+            <artifactId>xie-cell-starter-jpa</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+        </dependency>
+
     </dependencies>
 
 

@@ -38,6 +38,7 @@
         <!--        <undertow.version>2.3.22.Final</undertow.version>-->
         <!--                <logback.version>1.5.29</logback.version>-->
         <assertj.version>3.27.7</assertj.version>
+        <jackson-bom.version>2.21.1</jackson-bom.version>
     </properties>
 
     <!--    子模块-->
