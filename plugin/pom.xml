@@ -16,7 +16,6 @@
     <description>Maven plugin modules for Xie-Cells framework</description>
 
     <modules>
-        <module>xie-cell-plugin-ap</module>
     </modules>
 
 </project>

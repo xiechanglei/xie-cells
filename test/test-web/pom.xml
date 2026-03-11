@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>test-web</artifactId>
+    <name>test-web</name>
 
     <dependencies>
         <dependency>

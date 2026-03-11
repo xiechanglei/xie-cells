@@ -17,6 +17,28 @@
     <packaging>pom</packaging>
     <name>xie-cells-parent</name>
 
+    <!--     与发布相关的参数配置-->
+    <url>https://github.com/xiechanglei/xie-cells.git</url>
+    <description>a simple tool program for spring boot develop</description>
+    <developers>
+        <developer>
+            <name>xiechanglei</name>
+            <email>709955748@qq.com</email>
+        </developer>
+    </developers>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version2.0</name>
+            <url>https://www.apache.org/licenses/</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <scm>
+        <connection>scm:git:https://github.com/xiechanglei/xie-cells.git</connection>
+        <developerConnection>https://github.com/xiechanglei/xie-cells.git</developerConnection>
+        <url>https://github.com/xiechanglei/xie-cells.git</url>
+    </scm>
+
     <!--项目属性-->
     <properties>
         <!-- 项目构建配置参数-->
@@ -84,11 +106,6 @@
                 <artifactId>xie-cell-starter-web</artifactId>
                 <version>${revision}</version>
             </dependency>
-            <dependency>
-                <groupId>io.github.xiechanglei</groupId>
-                <artifactId>xie-cell-plugin-ap</artifactId>
-                <version>${revision}</version>
-            </dependency>
 
 
             <!--            uuidcreator-->
@@ -136,6 +153,25 @@
     <build>
         <pluginManagement>
             <plugins>
+                <!--                javadoc插件配置-->
+                <plugin>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.12.0</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <skip>true</skip>
+                        <additionalJOptions>
+                            <additionalJOption>-Xdoclint:none</additionalJOption>
+                        </additionalJOptions>
+                    </configuration>
+                </plugin>
                 <!--                maven 的源代码插件-->
                 <plugin>
                     <artifactId>maven-source-plugin</artifactId>
@@ -211,10 +247,36 @@
                         </execution>
                     </executions>
                 </plugin>
+
+                <!--    gpg 签名-->
+                <plugin>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>1.6</version>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <skip>true</skip>
+                        <keyname>xiechanglei</keyname>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
 
         <plugins>
+            <!--            生成javadoc插件-->
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
+            </plugin>
             <!-- 生成源代码-->
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
@@ -236,6 +298,23 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
+            </plugin>
+            <!--            gpg 发布-->
+            <plugin>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.9.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>ossrh</publishingServerId>
+                    <autoPublish>true</autoPublish>
+                </configuration>
             </plugin>
         </plugins>
         <!--        打包的时候包含下面的文件夹，并且开启环境参数注入-->

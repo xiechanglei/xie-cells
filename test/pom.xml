@@ -11,6 +11,11 @@
     </parent>
 
     <artifactId>test-cells</artifactId>
+    <name>test-cells</name>
+
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
 
     <packaging>pom</packaging>
     <modules>
