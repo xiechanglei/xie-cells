@@ -1,13 +1,27 @@
 package io.github.xiechanglei.cell.starter.jpa.auto.base;
 
 import io.github.xiechanglei.cell.common.bean.message.GlobalResult;
+import io.github.xiechanglei.cell.common.lang.reflect.ClassMemberHandler;
+import jakarta.persistence.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Selection;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public interface JpaForkTask {
+
+
+    Object realTask(ProceedingJoinPoint joinPoint, MethodSignature signature, Method method) throws Throwable;
+
 
     @Transactional
     default Object service(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -35,6 +49,72 @@ public interface JpaForkTask {
         return proceed;
     }
 
-    Object realTask(ProceedingJoinPoint joinPoint, MethodSignature signature, Method method) throws Throwable;
+    /**
+     * 使用 Criteria API + Tuple 进行字段过滤查询。
+     *
+     * @param entityClass  实体类类型
+     * @param onlyFields   只加载的字段列表
+     * @param ignoreFields 忽略的字段列表
+     * @return 过滤后的实体列表
+     */
+    default <T> List<T> queryWithFieldFilter(EntityManager em, Class<T> entityClass, String[] onlyFields, String[] ignoreFields) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Tuple> cq = cb.createTupleQuery();
+        Root<T> root = cq.from(entityClass);
+
+        // 确定最终需要查询的字段
+        String[] finalFields;
+        if (onlyFields.length > 0) {
+            // onlyFields 优先
+            finalFields = onlyFields;
+        } else {
+            List<String> ignoreList = Arrays.asList(ignoreFields);
+            // 获取所有字段，然后排除 ignoreFields
+            finalFields = ClassMemberHandler.of(entityClass)
+                    .withOutAnnotation(Transient.class, ManyToMany.class, ManyToOne.class, OneToMany.class, OneToOne.class)
+                    .getFields()
+                    .stream()
+                    .map(Field::getName)
+                    .filter(name -> !ignoreList.contains(name) && !name.equals("serialVersionUID"))
+                    .toArray(String[]::new);
+        }
+
+        // 构建字段选择
+        List<Selection<?>> selections = Arrays.stream(finalFields)
+                .map(root::get)
+                .collect(Collectors.toList());
+        cq.multiselect(selections);
+        List<Tuple> tuples = em.createQuery(cq).getResultList();
+
+        // 将 Tuple 映射到实体对象
+        return tuples.stream()
+                .map(tuple -> tupleToEntity(tuple, finalFields, entityClass))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 将 Tuple 结果映射到实体对象。
+     *
+     * @param tuple       Tuple 查询结果
+     * @param fields      字段名列表
+     * @param entityClass 实体类类型
+     * @return 映射后的实体对象
+     */
+    default <T> T tupleToEntity(Tuple tuple, String[] fields, Class<T> entityClass) {
+        try {
+            // 创建实体实例（使用无参构造函数）
+            T entity = entityClass.getDeclaredConstructor().newInstance();
+            // 遍历字段并设置值
+            for (int i = 0; i < fields.length; i++) {
+                String fieldName = fields[i];
+                Object value = tuple.get(i);
+                ClassMemberHandler.setFieldValue(entity, fieldName, value);
+            }
+
+            return entity;
+        } catch (Exception e) {
+            throw new RuntimeException("无法将 Tuple 映射到实体对象：" + entityClass.getName(), e);
+        }
+    }
 
 }

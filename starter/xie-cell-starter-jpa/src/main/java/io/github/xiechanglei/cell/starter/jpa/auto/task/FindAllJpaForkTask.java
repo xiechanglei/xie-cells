@@ -3,7 +3,6 @@ package io.github.xiechanglei.cell.starter.jpa.auto.task;
 import io.github.xiechanglei.cell.starter.jpa.auto.base.EntityInfo;
 import io.github.xiechanglei.cell.starter.jpa.auto.base.ForkMethodHandler;
 import io.github.xiechanglei.cell.starter.jpa.auto.base.JpaForkTask;
-import jakarta.persistence.EntityGraph;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -13,7 +12,14 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Method;
 
 /**
- * findAll对应注解的实际处理类
+ * findAll 对应注解的实际处理类。
+ * <p>
+ * 使用 JPA Criteria API + Tuple 实现动态字段过滤，
+ * 只查询指定字段并映射到实体对象返回。
+ * </p>
+ *
+ * @author xie
+ * @date 2026/3/4
  */
 @Component
 @RequiredArgsConstructor
@@ -23,17 +29,26 @@ public class FindAllJpaForkTask implements JpaForkTask {
     @Override
     public Object realTask(ProceedingJoinPoint joinPoint, MethodSignature signature, Method method) throws Throwable {
         // 获取注解
-        FindAll findById = method.getAnnotation(FindAll.class);
+        FindAll findAll = method.getAnnotation(FindAll.class);
         // 确定实体类
-        EntityInfo entityInfo = ForkMethodHandler.resolveEntityClass(method, findById.value());
-        // 查询实体对象
+        EntityInfo entityInfo = ForkMethodHandler.resolveEntityClass(method, findAll.value());
 
-        EntityGraph<?> entityGraph = em.createEntityGraph(entityInfo.entityClass());
-        entityGraph.addAttributeNodes("id");
+        String[] onlyFields = findAll.onlyFields();
+        String[] ignoreFields = findAll.ignoreFields();
 
-        Object result = em.createQuery("SELECT e FROM " + entityInfo.entityClass().getName() + " e", entityInfo.entityClass())
-                .setHint("jakarta.persistence.fetchgraph", entityGraph)
-                .getResultList();
+        // 判断是否需要进行字段过滤
+        boolean needFilter = onlyFields.length > 0 || ignoreFields.length > 0;
+
+        Object result;
+        if (needFilter) {
+            // 使用 Criteria API + Tuple 进行字段过滤查询
+            result = queryWithFieldFilter(em, entityInfo.entityClass(), onlyFields, ignoreFields);
+        } else {
+            // 查询所有字段
+            result = em.createQuery("SELECT e FROM " + entityInfo.entityClass().getName() + " e", entityInfo.entityClass())
+                    .getResultList();
+        }
+
         return invokeOriginalMethod(joinPoint, method, result);
     }
 }

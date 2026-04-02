@@ -139,6 +139,7 @@ public class ClassMemberHandler {
 
     /**
      * 不包含指定注解的字段
+     *
      * @param annotation 注解
      */
     @SafeVarargs
@@ -171,5 +172,44 @@ public class ClassMemberHandler {
             currentClass = currentClass.getSuperclass();
         }
         return fieldHandler;
+    }
+
+    /**
+     * 直接通过反射设置实体对象的字段值。
+     * <p>
+     * 支持从父类中查找字段，处理实体继承关系。
+     * </p>
+     *
+     * @param entity    实体对象
+     * @param fieldName 字段名
+     * @param value     字段值
+     */
+    public static void setFieldValue(Object entity, String fieldName, Object value) throws IllegalAccessException {
+        // 从实体类及其父类中查找字段
+        Field field = findField(entity.getClass(), fieldName);
+        if (field != null) {
+            field.setAccessible(true);
+            field.set(entity, value);
+        }
+    }
+
+    /**
+     * 从类及其父类中查找字段。
+     *
+     * @param clazz     起始类
+     * @param fieldName 字段名
+     * @return 找到的字段，未找到返回 null
+     */
+    public static Field findField(Class<?> clazz, String fieldName) {
+        Class<?> current = clazz;
+        while (current != null && current != Object.class) {
+            try {
+                return current.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException e) {
+                // 在当前类未找到，继续向父类查找
+                current = current.getSuperclass();
+            }
+        }
+        return null;
     }
 }

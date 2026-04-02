@@ -28,8 +28,8 @@ public class TestJpaController {
     @RequestMapping("/test/jpa/deleteById")
     public void deleteById() {
     }
-
-    @FindAll
+    @FindAll(ignoreFields = "password")
     @RequestMapping("/test/jpa/findAll")
-    public void findAll() {}
+    public void findAll() {
+    }
 }
