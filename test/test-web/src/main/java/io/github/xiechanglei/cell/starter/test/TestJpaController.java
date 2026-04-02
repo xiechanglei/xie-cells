@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @EntityClass(value = TestTable.class, name = "用户")
 public class TestJpaController {
 
-    @FindById
+    @FindById(ignoreFields = "password")
     @RequestMapping("/test/jpa/findById")
     public void findById() {
     }
@@ -28,6 +28,7 @@ public class TestJpaController {
     @RequestMapping("/test/jpa/deleteById")
     public void deleteById() {
     }
+
     @FindAll(ignoreFields = "password")
     @RequestMapping("/test/jpa/findAll")
     public void findAll() {

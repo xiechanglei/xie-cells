@@ -4,6 +4,8 @@ import io.github.xiechanglei.cell.starter.jpa.auto.base.EntityInfo;
 import io.github.xiechanglei.cell.starter.jpa.auto.base.ForkMethodHandler;
 import io.github.xiechanglei.cell.starter.jpa.auto.base.JpaForkTask;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Tuple;
+import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -41,8 +43,9 @@ public class FindAllJpaForkTask implements JpaForkTask {
 
         Object result;
         if (needFilter) {
-            // 使用 Criteria API + Tuple 进行字段过滤查询
-            result = queryWithFieldFilter(em, entityInfo.entityClass(), onlyFields, ignoreFields);
+            String[] finalFields = resolveFinalFields(entityInfo.entityClass(), onlyFields, ignoreFields);
+            TypedQuery<Tuple> tupleCriteriaQuery = queryWithFieldFilter(em, entityInfo.entityClass(), finalFields, null);
+            result = tuplesToEntity(tupleCriteriaQuery.getResultList(), finalFields, entityInfo.entityClass());
         } else {
             // 查询所有字段
             result = em.createQuery("SELECT e FROM " + entityInfo.entityClass().getName() + " e", entityInfo.entityClass())
