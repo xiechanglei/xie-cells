@@ -3,6 +3,7 @@ package io.github.xiechanglei.cell.starter.jpa.auto.task;
 import io.github.xiechanglei.cell.starter.jpa.auto.base.EntityInfo;
 import io.github.xiechanglei.cell.starter.jpa.auto.base.ForkMethodHandler;
 import io.github.xiechanglei.cell.starter.jpa.auto.base.JpaForkTask;
+import jakarta.persistence.EntityGraph;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -26,7 +27,13 @@ public class FindAllJpaForkTask implements JpaForkTask {
         // 确定实体类
         EntityInfo entityInfo = ForkMethodHandler.resolveEntityClass(method, findById.value());
         // 查询实体对象
-        Object result = em.createQuery("SELECT e FROM " + entityInfo.entityClass().getName() + " e", entityInfo.entityClass()).getResultList();
+
+        EntityGraph<?> entityGraph = em.createEntityGraph(entityInfo.entityClass());
+        entityGraph.addAttributeNodes("id");
+
+        Object result = em.createQuery("SELECT e FROM " + entityInfo.entityClass().getName() + " e", entityInfo.entityClass())
+                .setHint("jakarta.persistence.fetchgraph", entityGraph)
+                .getResultList();
         return invokeOriginalMethod(joinPoint, method, result);
     }
 }
