@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 该注解标注在方法上，表示自动实现根据 Id 获取实体对象的方法，
+ * 该注解，标注在方法上，表示自动实现根据 Id 删除实体对象的方法，
  * 方法的参数必须是一个 id类型的值,
  * <p>
  * 请注意因为需要返回数据,方法的返回值不能是void,我尝试着使用scopedValue在全局返回封装那里去解决了这个问题,所以你需要使用我的web starter那个模块
@@ -21,7 +21,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface FindById {
+public @interface DeleteById {
     /**
      * 指定要查询的实体类，如果为 TypeUsedClass.class 则在类上寻找注解 @EntityClass 来获取实体类
      */
@@ -34,4 +34,9 @@ public @interface FindById {
      * </p>
      */
     String idParamName() default "id";
+
+    /**
+     * 级联删除删除的对象
+     */
+    CascadeDelete[] cascadeDelete() default {};
 }

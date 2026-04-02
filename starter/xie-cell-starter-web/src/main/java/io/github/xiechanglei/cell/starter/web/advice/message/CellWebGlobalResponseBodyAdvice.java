@@ -2,6 +2,7 @@ package io.github.xiechanglei.cell.starter.web.advice.message;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.xiechanglei.cell.common.bean.message.GlobalResult;
 import io.github.xiechanglei.cell.common.bean.message.WebResult;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -116,7 +117,12 @@ public class CellWebGlobalResponseBodyAdvice implements ResponseBodyAdvice<Objec
         if (body instanceof WebResult) {
             result = (WebResult<?>) body;
         } else {
-            result = WebResult.success(body);
+            GlobalResult globalResult = GlobalResult.Result.get();
+            if (globalResult.isBound()) {
+                result = WebResult.success(globalResult.getResult());
+            } else {
+                result = WebResult.success(body);
+            }
         }
 
         //  String 类型的body不进行封装,spring boot 框架的问题，

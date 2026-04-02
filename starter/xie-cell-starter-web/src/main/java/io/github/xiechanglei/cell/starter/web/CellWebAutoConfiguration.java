@@ -1,5 +1,6 @@
 package io.github.xiechanglei.cell.starter.web;
 
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 
@@ -11,5 +12,6 @@ import org.springframework.context.annotation.PropertySource;
  */
 @ComponentScan("io.github.xiechanglei.cell.starter.web")
 @PropertySource("classpath:cell.web.properties")
+@ServletComponentScan("io.github.xiechanglei.cell.starter.web")
 public class CellWebAutoConfiguration {
 }

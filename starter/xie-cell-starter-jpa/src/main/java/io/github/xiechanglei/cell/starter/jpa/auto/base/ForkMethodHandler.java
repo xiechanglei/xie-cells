@@ -1,5 +1,6 @@
 package io.github.xiechanglei.cell.starter.jpa.auto.base;
 
+import io.github.xiechanglei.cell.common.bean.message.GlobalParamResolver;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 
@@ -33,7 +34,10 @@ public class ForkMethodHandler {
                 return args[i];
             }
         }
-
+        // 如果没有,尝试从GlobalParamResolver.GlobalParam中获取
+        if(GlobalParamResolver.GlobalParam.isBound()){
+            return GlobalParamResolver.GlobalParam.get().getParam(paramName);
+        }
         return null;
     }
 

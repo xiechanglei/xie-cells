@@ -13,6 +13,19 @@
     <artifactId>xie-cell-common-bean</artifactId>
     <name>Xie-Cells Common Bean Module</name>
     <description>Manager beans for Xie-Cells framework</description>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>21</source>
+                    <target>21</target>
+                    <compilerArgs>--enable-preview</compilerArgs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 
 </project>

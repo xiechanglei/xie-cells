@@ -3,6 +3,7 @@ package io.github.xiechanglei.cell.starter.jpa.auto.task;
 import io.github.xiechanglei.cell.starter.jpa.auto.base.EntityInfo;
 import io.github.xiechanglei.cell.starter.jpa.auto.base.ForkMethodHandler;
 import io.github.xiechanglei.cell.starter.jpa.auto.base.JpaForkTask;
+import io.github.xiechanglei.cell.starter.jpa.auto.exception.EntityNotFoundException;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -17,7 +18,7 @@ import java.lang.reflect.Method;
 @Component
 @RequiredArgsConstructor
 public class FindByIdJpaForkTask implements JpaForkTask {
-    private final EntityManager entityManager;
+    private final EntityManager em;
 
     @Override
     public Object realTask(ProceedingJoinPoint joinPoint, MethodSignature signature, Method method) throws Throwable {
@@ -28,8 +29,11 @@ public class FindByIdJpaForkTask implements JpaForkTask {
         // 确定实体类
         EntityInfo entityInfo = ForkMethodHandler.resolveEntityClass(method, findById.value());
         // 执行查询结果
-        Object result = (id == null) ? null : entityManager.find(entityInfo.entityClass(), id);
+        Object result = (id == null) ? null : em.find(entityInfo.entityClass(), id);
         // 处理查询结果
-        return invokeOriginalMethod(joinPoint, method, result, entityInfo);
+        if (result == null) {
+            throw EntityNotFoundException.of(entityInfo.entityName() + "不存在");
+        }
+        return invokeOriginalMethod(joinPoint, method, result);
     }
 }

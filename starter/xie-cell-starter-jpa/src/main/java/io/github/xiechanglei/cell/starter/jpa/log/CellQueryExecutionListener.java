@@ -36,7 +36,7 @@ public class CellQueryExecutionListener implements QueryExecutionListener {
         if (!list.isEmpty()) {
             if (list.size() == 1) {
                 QueryInfo queryInfo = list.getFirst();
-                doLog("ExecutionTime: " + executionInfo.getElapsedTime() + "ms\nSQL: " + queryInfo.getQuery(), executionInfo.getElapsedTime());
+                doLog("ExecutionTime: " + executionInfo.getElapsedTime() + "ms\tSQL: " + queryInfo.getQuery(), executionInfo.getElapsedTime());
             } else {
                 StringBuilder sb = new StringBuilder();
                 sb.append("ExecutionTime: ").append(executionInfo.getElapsedTime()).append("ms\n");
