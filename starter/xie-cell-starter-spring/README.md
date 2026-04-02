@@ -14,7 +14,7 @@ Spring Boot核心功能的Starter，提供Spring Boot应用的基础配置和扩
 <dependency>
     <groupId>io.github.xiechanglei</groupId>
     <artifactId>xie-cell-starter-spring</artifactId>
-    <version>3.5.10.1</version>
+    <version>${xie.cells.version}</version>
 </dependency>
 ```
 

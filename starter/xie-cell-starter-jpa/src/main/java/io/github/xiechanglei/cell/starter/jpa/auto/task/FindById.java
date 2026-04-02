@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 /**
  * 根据 Id 获取实体对象的方法的注解，标注在方法上，表示自动实现根据 Id 获取实体对象的方法，
- * 方法的参数必须是一个 id
+ * 方法的参数必须是一个 id类型的值
  *
  * @author xie
  * @date 2026/3/4

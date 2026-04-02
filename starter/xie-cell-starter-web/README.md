@@ -1,10 +1,5 @@
 # Xie-Cells Web Starter 模块
 
-[![Version](https://img.shields.io/badge/version-3.5.10.1-blue.svg)](https://github.com/xiechanglei/xie-cells)
-[![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](https://www.apache.org/licenses/LICENSE-2.0)
-[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://openjdk.java.net/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.10-brightgreen.svg)](https://spring.io/projects/spring-boot)
-
 Web 功能 Starter，提供 Web 应用的基础配置和扩展功能，基于 Spring Boot Web 进行增强。
 
 ## 功能特性
@@ -29,7 +24,7 @@ Web 功能 Starter，提供 Web 应用的基础配置和扩展功能，基于 Sp
 <dependency>
     <groupId>io.github.xiechanglei</groupId>
     <artifactId>xie-cell-starter-web</artifactId>
-    <version>3.5.10.1</version>
+    <version>${xie.cells.version}</version>
 </dependency>
 ```
 

@@ -15,7 +15,7 @@
 <dependency>
     <groupId>io.github.xiechanglei</groupId>
     <artifactId>xie-cell-common-lang</artifactId>
-    <version>3.5.10.1</version>
+    <version>${xie.cells.version}</version>
 </dependency>
 ```
 
