@@ -88,6 +88,6 @@ public class ForkMethodHandler {
             return new EntityInfo(annotation.value(), annotation.name());
         }
 
-        throw new IllegalStateException("无法确定实体类类型，请在方法上使用@FindById 指定实体类，或在类上使用@EntityClass 注解");
+        throw new IllegalStateException("无法确定实体类类型，请在方法上使用对应的注解指定实体类，或在类上使用@EntityClass 注解");
     }
 }

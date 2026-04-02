@@ -9,7 +9,7 @@ package io.github.xiechanglei.cell.starter.jpa.auto.base;
  * 使用示例：
  * <pre>{@code
  * @FindById(User.class)
- * public UserDTO getUser(Long id, FindResult result) {
+ * public UserDTO getUser(Long id, ExecuteResult result) {
  *     if (!result.isFound()) {
  *         // 自定义处理逻辑
  *         return new UserDTO(); // 返回默认值
