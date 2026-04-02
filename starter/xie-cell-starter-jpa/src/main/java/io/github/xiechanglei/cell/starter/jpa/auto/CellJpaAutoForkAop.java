@@ -2,6 +2,7 @@ package io.github.xiechanglei.cell.starter.jpa.auto;
 
 import io.github.xiechanglei.cell.starter.jpa.auto.base.ExecuteResult;
 import io.github.xiechanglei.cell.starter.jpa.auto.task.DeleteByIdJpaForkTask;
+import io.github.xiechanglei.cell.starter.jpa.auto.task.FindAllJpaForkTask;
 import io.github.xiechanglei.cell.starter.jpa.auto.task.FindByIdJpaForkTask;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Component;
 public class CellJpaAutoForkAop {
     private final FindByIdJpaForkTask findByIdTask;
     private final DeleteByIdJpaForkTask deleteByIdTask;
+    private final FindAllJpaForkTask findAllTask;
 
     /**
      * 处理根据 id 获取实体对象的方法，主要是根据方法的参数类型和参数值来获取对应的实体对象，并返回给调用者
@@ -51,5 +53,16 @@ public class CellJpaAutoForkAop {
     @Around("@annotation(io.github.xiechanglei.cell.starter.jpa.auto.task.DeleteById)")
     public Object aroundDeleteById(ProceedingJoinPoint pjp) throws Throwable {
         return deleteByIdTask.service(pjp);
+    }
+
+    /**
+     * 处理获取所有实体对象的方法
+     *
+     * @param pjp 切点连接点
+     * @return 查询到的实体对象或方法自定义的返回值
+     */
+    @Around("@annotation(io.github.xiechanglei.cell.starter.jpa.auto.task.FindAll)")
+    public Object aroundFindAll(ProceedingJoinPoint pjp) throws Throwable {
+        return findAllTask.service(pjp);
     }
 }

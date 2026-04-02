@@ -1,8 +1,8 @@
 package io.github.xiechanglei.cell.starter.test;
 
 import io.github.xiechanglei.cell.starter.jpa.auto.base.EntityClass;
-import io.github.xiechanglei.cell.starter.jpa.auto.task.CascadeDelete;
 import io.github.xiechanglei.cell.starter.jpa.auto.task.DeleteById;
+import io.github.xiechanglei.cell.starter.jpa.auto.task.FindAll;
 import io.github.xiechanglei.cell.starter.jpa.auto.task.FindById;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,10 +24,12 @@ public class TestJpaController {
     public void findById() {
     }
 
-    @DeleteById(cascadeDelete = {
-            @CascadeDelete(entity = TestTable.class, property = "userName")
-    })
+    @DeleteById
     @RequestMapping("/test/jpa/deleteById")
     public void deleteById() {
     }
+
+    @FindAll
+    @RequestMapping("/test/jpa/findAll")
+    public void findAll() {}
 }
