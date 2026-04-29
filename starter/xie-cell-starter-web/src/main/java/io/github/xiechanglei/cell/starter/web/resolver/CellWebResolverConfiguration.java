@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.format.FormatterRegistry;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -21,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CellWebResolverConfiguration implements WebMvcConfigurer {
     private final ApplicationContext applicationContext;
+
     /**
      * 注册自定义的请求参数解析器。
      * <p>
@@ -38,18 +38,6 @@ public class CellWebResolverConfiguration implements WebMvcConfigurer {
                 log.info("已注册自定义参数解析器: {}", resolver.getClass().getName());
             } else {
                 log.warn("自定义参数解析器 {} 未实现 HandlerMethodArgumentResolver 接口，无法注册", resolver.getClass().getName());
-            }
-        });
-    }
-
-    @Override
-    public void addFormatters(FormatterRegistry registry) {
-        applicationContext.getBeansWithAnnotation(WebConverter.class).values().forEach(resolver -> {
-            if (resolver instanceof org.springframework.core.convert.converter.Converter) {
-                registry.addConverter((org.springframework.core.convert.converter.Converter<?, ?>) resolver);
-                log.info("已注册自定义转换器: {}", resolver.getClass().getName());
-            } else {
-                log.warn("自定义转换器 {} 未实现 Converter 接口，无法注册", resolver.getClass().getName());
             }
         });
     }

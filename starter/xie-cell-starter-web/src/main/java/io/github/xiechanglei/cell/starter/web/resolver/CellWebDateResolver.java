@@ -1,7 +1,6 @@
 package io.github.xiechanglei.cell.starter.web.resolver;
 
 import org.springframework.core.MethodParameter;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -26,10 +25,9 @@ import java.util.Date;
  * 3. 时间戳
  * </p>
  */
-@WebConverter
 @WebResolver
 @Component
-public class CellWebDateResolver implements HandlerMethodArgumentResolver, Converter<String, Date> {
+public class CellWebDateResolver implements HandlerMethodArgumentResolver {
     /**
      * 日期时间格式化器，用于解析 "yyyy-MM-dd HH:mm:ss" 格式的时间字符串
      */
@@ -80,7 +78,6 @@ public class CellWebDateResolver implements HandlerMethodArgumentResolver, Conve
         return convert(dateStr);
     }
 
-    @Override
     public Date convert(String dateStr) {
         if (!StringUtils.hasText(dateStr)) {
             return null;
