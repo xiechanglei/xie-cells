@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import io.github.xiechanglei.cell.starter.web.resolver.CellWebResolverConfigProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
@@ -35,8 +34,8 @@ import java.io.IOException;
  * @author xie
  * @date 2024/12/24
  */
-@Component
 @RequiredArgsConstructor
+@WebSerializer(value = "CellJpaPageSerializer",targetType = Page.class)
 @SuppressWarnings("all")
 public class CellJpaPageSerializer extends JsonSerializer<Page> {
     /**

@@ -1,9 +1,11 @@
 package io.github.xiechanglei.cell.starter.web.serialize;
 
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -32,26 +34,13 @@ import java.util.Date;
  */
 @Configuration
 @RequiredArgsConstructor
+@Log4j2
 public class CellWebJsonSerializeConfig implements ApplicationContextAware {
-    /**
-     * JPA Page 对象序列化器
-     */
-    private final CellJpaPageSerializer cellJpaPageSerializer;
 
     /**
      * Jackson ObjectMapper 对象
      */
     private final ObjectMapper objectMapper;
-
-    /**
-     * 日期序列化器
-     */
-    WebDateSerializer webDateSerializer = new WebDateSerializer();
-
-    /**
-     * Long 类型序列化器
-     */
-    WebLongSerializer webLongSerializer = new WebLongSerializer();
 
     /**
      * 设置 ApplicationContext 并注册自定义序列化器。
@@ -67,10 +56,17 @@ public class CellWebJsonSerializeConfig implements ApplicationContextAware {
     public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
         SimpleModule module = new SimpleModule();
 
-        module.addSerializer(Long.class, webLongSerializer);
-        module.addSerializer(long.class, webLongSerializer);
-        module.addSerializer(Date.class, webDateSerializer);
-        module.addSerializer(Page.class, cellJpaPageSerializer);
+        applicationContext.getBeansWithAnnotation(WebSerializer.class).values().forEach(se -> {
+            WebSerializer annotation = se.getClass().getAnnotation(WebSerializer.class);
+            if (se instanceof JsonSerializer) {
+                log.info("注册自定义 JSON 序列化器: {}，目标类型: {}", se.getClass().getName(), annotation.targetType());
+                for (Class<?> aClass : annotation.targetType()) {
+                    module.addSerializer(aClass, (JsonSerializer) se);
+                }
+            } else {
+                log.warn("自定义 JSON 序列化器 {} 未实现 JsonSerializer 接口，无法注册", se.getClass().getName());
+            }
+        });
         objectMapper.registerModule(module);
     }
 }

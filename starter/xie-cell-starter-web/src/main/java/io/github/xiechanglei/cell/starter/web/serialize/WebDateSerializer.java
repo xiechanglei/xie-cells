@@ -21,6 +21,7 @@ import java.util.Date;
  * @author xie
  * @date 2024/12/24
  */
+@WebSerializer(value = "WebDateSerializer",targetType = Date.class)
 public class WebDateSerializer extends StdSerializer<Object> {
 
     /**

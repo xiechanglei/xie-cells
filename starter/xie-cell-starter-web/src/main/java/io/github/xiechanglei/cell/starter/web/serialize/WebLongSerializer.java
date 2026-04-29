@@ -21,6 +21,8 @@ import java.io.IOException;
  * @author xie
  * @date 2024/12/24
  */
+
+@WebSerializer(value = "WebLongSerializer", targetType = {Long.class, long.class})
 public class WebLongSerializer extends StdSerializer<Object> {
 
     /**
@@ -49,7 +51,7 @@ public class WebLongSerializer extends StdSerializer<Object> {
      * @param value    要序列化的值，必须是 Long 类型
      * @param gen      JSON 生成器
      * @param provider 序列化提供者
-     * @throws IOException 如果写入 JSON 时发生 IO 错误
+     * @throws IOException              如果写入 JSON 时发生 IO 错误
      * @throws IllegalArgumentException 如果传入的值不是 Long 类型
      */
     @Override
