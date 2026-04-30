@@ -10,7 +10,7 @@ import org.springframework.context.annotation.PropertySource;
  * @author xie
  * @date 2026/2/12
  */
-@ComponentScan("io.github.xiechanglei.cell.starter.web")
+@ComponentScan
 @PropertySource("classpath:cell.web.properties")
 @ServletComponentScan("io.github.xiechanglei.cell.starter.web")
 public class CellWebAutoConfiguration {

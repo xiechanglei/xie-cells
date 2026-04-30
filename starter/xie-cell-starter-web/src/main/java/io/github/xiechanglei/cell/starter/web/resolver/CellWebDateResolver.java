@@ -1,5 +1,6 @@
 package io.github.xiechanglei.cell.starter.web.resolver;
 
+import io.github.xiechanglei.cell.common.lang.date.DateHelper;
 import org.springframework.core.MethodParameter;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -9,10 +10,6 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
@@ -28,18 +25,7 @@ import java.util.Date;
 @WebResolver
 @Component
 public class CellWebDateResolver implements HandlerMethodArgumentResolver {
-    /**
-     * 日期时间格式化器，用于解析 "yyyy-MM-dd HH:mm:ss" 格式的时间字符串
-     */
-    private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    /**
-     * 日期格式化器，用于解析 "yyyy-MM-dd" 格式的日期字符串
-     */
-    private static final DateTimeFormatter shortDateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    /**
-     * 时区设置为 GMT+8
-     */
-    private static final ZoneId zoneId = ZoneId.of("GMT+8");
+
 
     /**
      * 判断当前解析器是否支持处理指定的参数类型。
@@ -82,14 +68,9 @@ public class CellWebDateResolver implements HandlerMethodArgumentResolver {
         if (!StringUtils.hasText(dateStr)) {
             return null;
         }
+
         if (dateStr.contains("-")) { // If the dateStr contains "-", it is a date format string
-
-            if (dateStr.length() > 10) { // use LocalDateTime to parse the dateStr
-                return Date.from(LocalDateTime.parse(dateStr, dateFormat).atZone(zoneId).toInstant());
-            } else { // use LocalDate to parse the dateStr
-                return Date.from(LocalDate.parse(dateStr, shortDateFormat).atStartOfDay(zoneId).toInstant());
-            }
-
+            return DateHelper.convertor.parse(dateStr);
         } else { // If the dateStr is a timestamp
             return new Date(Long.parseLong(dateStr));
         }
