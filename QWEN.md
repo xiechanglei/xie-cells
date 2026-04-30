@@ -11,7 +11,7 @@
 - 根目录: `/home/xie/code-work-space/java/xie-cells`
 - 使用 Maven 进行依赖管理 (pom.xml 存在)
 - 包含 .git 版本控制
-- 已配置 Spring Boot 3.5.13 父项目
+- 已配置 Spring Boot 3.5.14 父项目
 - 支持 Java 21
 - 已配置 Lombok、单元测试等基础依赖
 

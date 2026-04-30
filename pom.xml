@@ -7,7 +7,7 @@
     <parent>
         <artifactId>spring-boot-starter-parent</artifactId>
         <groupId>org.springframework.boot</groupId>
-        <version>3.5.13</version>
+        <version>3.5.14</version>
     </parent>
 
 
@@ -48,7 +48,7 @@
         <!-- 定义一个全局的版本号码，减少维护版本号码的成本,
         版本号的规则为: springboot的版本号 + . + 项目的版本号
         -->
-        <revision>3.5.13.1</revision>
+        <revision>3.5.14.1</revision>
 
         <!-- 依赖版本管理 -->
         <auto-service.version>1.1.1</auto-service.version>
