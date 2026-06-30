@@ -1,6 +1,6 @@
 package io.github.xiechanglei.cell.starter.test;
 
-import io.github.xiechanglei.cell.common.jpa.bean.entity.UUIDStringEntity;
+import io.github.xiechanglei.cell.common.jpa.bean.entity.UUIDEntity;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +14,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class TestTable extends UUIDStringEntity {
+public class TestTable extends UUIDEntity {
     private String userName;
     private String password;
 }

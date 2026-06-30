@@ -19,6 +19,8 @@
         <module>xie-cell-starter-web</module>
         <module>xie-cell-starter-spring</module>
         <module>xie-cell-starter-jpa</module>
+        <module>xie-cell-starter-rbac-core</module>
+        <module>xie-cell-starter-rbac-api</module>
     </modules>
 
 </project>

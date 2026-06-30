@@ -1,17 +1,17 @@
 package io.github.xiechanglei.cell.common.jpa.bean.entity;
 
-import io.github.xiechanglei.cell.common.jpa.bean.generator.UUIDSequence;
+import io.github.xiechanglei.cell.common.jpa.bean.generator.UUIDStringSequence;
+import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
 
-import java.util.UUID;
-
 
 /**
- * 使用UUID做为主键，uuid采用v7版本生成
+ * 使用UUID生成String类型ID的实体基类，用在数据量比较小的表上，
+ * 比直接用UUID类型的ID浪费存储空间，优点是代码复杂度不高，使用String可以操作
  */
 @Getter
 @Setter
@@ -21,7 +21,8 @@ public class UUIDEntity {
      * UUID生成ID
      */
     @Id
-    @UUIDSequence
+    @UUIDStringSequence
+    @Column(length = 32)
     @Comment("ID")
-    private UUID id;
+    private String id;
 }

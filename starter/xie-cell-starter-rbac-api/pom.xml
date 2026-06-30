@@ -6,24 +6,20 @@
 
     <parent>
         <groupId>io.github.xiechanglei</groupId>
-        <artifactId>test-cells</artifactId>
+        <artifactId>xie-cells-starter</artifactId>
         <version>${revision}</version>
     </parent>
 
-    <artifactId>test-web</artifactId>
-    <name>test-web</name>
+    <artifactId>xie-cell-starter-rbac-api</artifactId>
+    <name>Xie-Cells rbac starter api module</name>
+    <description>spring boot starter of rbac api for Xie-Cells framework</description>
+
 
     <dependencies>
         <dependency>
             <groupId>io.github.xiechanglei</groupId>
-            <artifactId>xie-cell-starter-rbac-core</artifactId>
+            <artifactId>xie-cell-starter-jpa</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-        </dependency>
-
     </dependencies>
-
 
 </project>

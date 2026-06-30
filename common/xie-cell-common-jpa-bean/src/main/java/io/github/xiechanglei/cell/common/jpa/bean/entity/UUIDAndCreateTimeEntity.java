@@ -2,11 +2,17 @@ package io.github.xiechanglei.cell.common.jpa.bean.entity;
 
 import io.github.xiechanglei.cell.common.jpa.bean.generator.UUIDStringSequence;
 import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
 
 
 /**
@@ -16,7 +22,8 @@ import org.hibernate.annotations.Comment;
 @Getter
 @Setter
 @MappedSuperclass
-public class UUIDStringEntity {
+@EntityListeners(AuditingEntityListener.class)
+public class UUIDAndCreateTimeEntity {
     /*
      * UUID生成ID
      */
@@ -25,4 +32,13 @@ public class UUIDStringEntity {
     @Column(length = 32)
     @Comment("ID")
     private String id;
+
+    /**
+     * 创建时间
+     */
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @CreatedDate
+    @Column(name = "create_time", nullable = false)
+    @Comment("创建时间")
+    private Date createTime;
 }

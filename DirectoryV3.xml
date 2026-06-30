@@ -14,4 +14,6 @@
     <tree path="/starter/xie-cell-starter-jpa" title="spring core starter" icon="ToolwindowsInfoEvents"/>
     <tree path="/starter/xie-cell-starter-spring" title="spring core starter" icon="ToolwindowsInfoEvents"/>
     <tree path="/starter/xie-cell-starter-web" title="web starter" icon="ToolwindowsInfoEvents"/>
+    <tree path="/starter/xie-cell-starter-rbac-core" title="rbac 核心模块" icon="ToolwindowsInfoEvents"/>
+    <tree path="/starter/xie-cell-starter-rbac-api" title="rbac 接口" icon="ToolwindowsInfoEvents"/>
 </trees>

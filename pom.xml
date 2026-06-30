@@ -7,7 +7,7 @@
     <parent>
         <artifactId>spring-boot-starter-parent</artifactId>
         <groupId>org.springframework.boot</groupId>
-        <version>3.5.13</version>
+        <version>3.5.16</version>
     </parent>
 
 
@@ -48,7 +48,7 @@
         <!-- 定义一个全局的版本号码，减少维护版本号码的成本,
         版本号的规则为: springboot的版本号 + . + 项目的版本号
         -->
-        <revision>3.5.13.1</revision>
+        <revision>3.5.16.1</revision>
 
         <!-- 依赖版本管理 -->
         <auto-service.version>1.1.1</auto-service.version>
@@ -100,6 +100,16 @@
             <dependency>
                 <groupId>io.github.xiechanglei</groupId>
                 <artifactId>xie-cell-starter-web</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.xiechanglei</groupId>
+                <artifactId>xie-cell-starter-rbac-core</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.xiechanglei</groupId>
+                <artifactId>xie-cell-starter-rbac-api</artifactId>
                 <version>${revision}</version>
             </dependency>
 
@@ -163,8 +173,11 @@
                     </executions>
                     <configuration>
                         <skip>true</skip>
+                        <source>${maven.compiler.source}</source>
+                        <encoding>${project.build.sourceEncoding}</encoding>
                         <additionalJOptions>
                             <additionalJOption>-Xdoclint:none</additionalJOption>
+                            <additionalJOption>--enable-preview</additionalJOption>
                         </additionalJOptions>
                     </configuration>
                 </plugin>
@@ -218,6 +231,16 @@
                         <source>${maven.compiler.source}</source>
                         <target>${maven.compiler.target}</target>
                         <release>${maven.compiler.target}</release>
+                        <compilerArgs>
+                            <arg>--enable-preview</arg>
+                        </compilerArgs>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <configuration>
+                        <jvmArguments>--enable-preview</jvmArguments>
                     </configuration>
                 </plugin>
                 <!--            打包之前clean-->
