@@ -7,6 +7,7 @@ import io.github.xiechanglei.cell.starter.rbac.core.provide.RbacPermission;
 import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacCodeRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -58,7 +59,7 @@ public class CellRbacDataInitializer {
         Map<String, Object> beans = applicationContext.getBeansWithAnnotation(RbacBean.class);
         for (Object bean : beans.values()) {
             // 获取类上的所有方法
-            for (var method : bean.getClass().getDeclaredMethods()) {
+            for (var method : AopUtils.getTargetClass(bean).getDeclaredMethods()) {
                 // 获取方法上的@RbacPermission注解
                 RbacPermission rbacPermission = method.getAnnotation(RbacPermission.class);
                 if (rbacPermission != null) {

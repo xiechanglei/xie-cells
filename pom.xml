@@ -177,7 +177,6 @@
                         <encoding>${project.build.sourceEncoding}</encoding>
                         <additionalJOptions>
                             <additionalJOption>-Xdoclint:none</additionalJOption>
-                            <additionalJOption>--enable-preview</additionalJOption>
                         </additionalJOptions>
                     </configuration>
                 </plugin>
@@ -231,16 +230,6 @@
                         <source>${maven.compiler.source}</source>
                         <target>${maven.compiler.target}</target>
                         <release>${maven.compiler.target}</release>
-                        <compilerArgs>
-                            <arg>--enable-preview</arg>
-                        </compilerArgs>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <configuration>
-                        <jvmArguments>--enable-preview</jvmArguments>
                     </configuration>
                 </plugin>
                 <!--            打包之前clean-->
