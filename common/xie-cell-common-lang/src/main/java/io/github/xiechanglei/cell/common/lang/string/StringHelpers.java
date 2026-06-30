@@ -55,4 +55,9 @@ public class StringHelpers {
         }
         return str1.equals(str2);
     }
+
+
+    public boolean isDifferent(String str1, String str2) {
+        return !isSame(str1, str2);
+    }
 }

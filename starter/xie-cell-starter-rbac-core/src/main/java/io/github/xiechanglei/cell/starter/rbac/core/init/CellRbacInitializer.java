@@ -25,7 +25,7 @@ public class CellRbacInitializer implements ApplicationContextAware {
     @Override
     public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
         cellRbacDataInitializer.process(applicationContext);
-        cellRbacRoleInitializer.process();
-        cellRbacUserInitializer.process();
+//        cellRbacRoleInitializer.process();
+//        cellRbacUserInitializer.process();
     }
 }
