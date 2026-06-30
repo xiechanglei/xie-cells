@@ -14,6 +14,10 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "cell.rbac")
 public class RbacCellConfigProperties {
+    /**
+     * 当前模块的名称，书要用于模块权限的全量diff，如果是分体式架构模式下，不同的模块应该使用不同的moduleName,否则会出现权限入库的时候缺失
+     */
+    private String moduleName = "default";
 
     /**
      * 是否开启角色权限配置,默认为true

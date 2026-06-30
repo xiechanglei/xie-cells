@@ -2,6 +2,7 @@ package io.github.xiechanglei.cell.starter.rbac.core.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.github.xiechanglei.cell.common.jpa.bean.entity.UUIDAndTimeEntity;
+import io.github.xiechanglei.cell.starter.jpa.entity.EnableStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,12 +24,6 @@ public class RbacUser extends UUIDAndTimeEntity {
 
     // 默认用户序列号
     public static Short DEFAULT_USER_SERIAL = 1;
-
-    /**
-     * 用户状态
-     */
-    public enum UserStatus {DISABLE, ENABLE}
-
     /**
      * 用户名称
      */
@@ -50,7 +45,7 @@ public class RbacUser extends UUIDAndTimeEntity {
     @Column(name = "user_status", length = 10, nullable = false)
     @Enumerated(EnumType.STRING)
     @Comment("用户状态，disable:禁用，enable:启用")
-    private UserStatus userStatus;
+    private EnableStatus userStatus;
 
     /**
      * 昵称
@@ -99,7 +94,7 @@ public class RbacUser extends UUIDAndTimeEntity {
     @Comment("用户授权值，基于授权值产生的token不会过期，除非修改了授权值")
     private String feature;
 
-    public RbacUser(String id, Short userSerial, String feature, UserStatus userStatus) {
+    public RbacUser(String id, Short userSerial, String feature, EnableStatus userStatus) {
         this.setId(id);
         this.userSerial = userSerial;
         this.feature = feature;
@@ -121,7 +116,7 @@ public class RbacUser extends UUIDAndTimeEntity {
      */
     public final void buildAdmin(String adminName) {
         this.setId(null);
-        this.userStatus = UserStatus.ENABLE;
+        this.userStatus = EnableStatus.ENABLED;
         this.userSerial = DEFAULT_USER_SERIAL;
         this.nickName = adminName;
         this.userName = adminName;

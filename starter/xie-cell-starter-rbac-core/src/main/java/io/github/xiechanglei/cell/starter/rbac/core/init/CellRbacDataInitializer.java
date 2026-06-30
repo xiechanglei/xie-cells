@@ -1,12 +1,12 @@
 package io.github.xiechanglei.cell.starter.rbac.core.init;
 
+import io.github.xiechanglei.cell.starter.rbac.core.config.RbacCellConfigProperties;
 import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacCode;
 import io.github.xiechanglei.cell.starter.rbac.core.provide.RbacBean;
 import io.github.xiechanglei.cell.starter.rbac.core.provide.RbacPermission;
 import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacCodeRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -26,9 +26,7 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class CellRbacDataInitializer {
-
-    @Value("${spring.application.name}")
-    private String applicationName;
+    private final RbacCellConfigProperties rbacCellConfigProperties;
 
     private final RbacCodeRepo rbacCodeRepo;
 
@@ -38,14 +36,16 @@ public class CellRbacDataInitializer {
      * 2. 获取当前模块在数据库中已经存在的权限码
      * 3. 对扫描到的权限码和数据库中已经存在的权限码进行对比，找出新增的权限码，需要删除的权限码，以及需要更新的权限码
      * 4. 将新增的权限码插入到数据库中，将需要删除的权限码从数据库中删除，将需要更新的权限码更新到数据库中
-     *
-     * @param applicationContext
      */
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     protected void process(ApplicationContext applicationContext) {
+        if ("default".equals(rbacCellConfigProperties.getModuleName())) {
+            log.warn("当前模块的名称为默认值default，分体式架构下请在不同的模块的配置文件中配置各自的cell.rbac.module-name属性，建议使用当前模块的包名作为模块名称");
+        }
         List<RbacCode> rbacCodes = scanPermission(applicationContext);
-        log.info("application name: {}, scan permission size: {}", applicationName, rbacCodes.size());
-
+        log.info("scan permission size: {}", rbacCodes.size());
+        List<RbacCode> all = rbacCodeRepo.findAll();
+        log.info("database permission size: {}", all.size());
     }
 
 
@@ -67,6 +67,8 @@ public class CellRbacDataInitializer {
                 }
             }
         }
-        return permissionMap.values().stream().map(permission -> RbacCode.create(permission.code(), permission.name(), permission.description(), applicationName, permission.log())).toList();
+        return permissionMap.values().stream().map(permission ->
+                RbacCode.create(permission.code(), permission.name(), permission.description(), rbacCellConfigProperties.getModuleName(), permission.log())
+        ).toList();
     }
 }
