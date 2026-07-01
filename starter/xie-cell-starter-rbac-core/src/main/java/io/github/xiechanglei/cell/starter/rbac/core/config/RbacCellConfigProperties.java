@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  */
 @Data
 @Component
-@ConfigurationProperties(prefix = "cell.rbac")
+@ConfigurationProperties(prefix = "cell.rbac.base")
 public class RbacCellConfigProperties {
     /**
      * 当前模块的名称，书要用于模块权限的全量diff，如果是分体式架构模式下，不同的模块应该使用不同的moduleName,否则会出现权限入库的时候缺失
@@ -35,22 +35,7 @@ public class RbacCellConfigProperties {
     private String tokenName = "auth-token";
 
     /**
-     * 超级管理员的角色名，默认为 超级管理员
+     * token 密钥
      */
-    private String adminRoleName = "超级管理员";
-
-    /**
-     * 超级管理员的用户名，默认为 admin
-     */
-    private String adminUsername = "admin";
-
-    /**
-     * 超级管理员的密码，默认为 123456
-     */
-    private String adminPassword = "123456";
-
-    /**
-     * 密码规则，默认为 6-20位数字和字母的组合
-     */
-    private String passwordRule = "\\w{6,20}";
+    private String tokenSecret = "cell-rbac";
 }

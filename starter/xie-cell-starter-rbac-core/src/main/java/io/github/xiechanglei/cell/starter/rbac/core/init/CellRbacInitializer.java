@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 @Log4j2
-@ConditionalOnProperty(prefix = "cell.rbac", name = "enable", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "cell.rbac.base", name = "enable", havingValue = "true", matchIfMissing = true)
 public class CellRbacInitializer implements ApplicationContextAware {
 
     private final RbacCellConfigProperties rbacCellConfigProperties;
@@ -45,7 +45,7 @@ public class CellRbacInitializer implements ApplicationContextAware {
     @Override
     public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
         if ("default".equals(rbacCellConfigProperties.getModuleName())) {
-            log.warn("当前模块的名称为默认值default，分体式架构下请在不同的模块的配置文件中配置各自的cell.rbac.module-name属性，建议使用当前模块的包名作为模块名称");
+            log.warn("当前模块的名称为默认值default，分体式架构下请在不同的模块的配置文件中配置各自的cell.rbac.base.module-name属性，建议使用当前模块的包名作为模块名称");
         }
         Map<String, RbacCode> rbacCodes = scanPermission(applicationContext);
         List<RbacCode> all = rbacCodeRepo.findByRefModule(rbacCellConfigProperties.getModuleName());
