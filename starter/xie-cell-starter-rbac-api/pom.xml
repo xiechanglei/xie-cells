@@ -18,7 +18,7 @@
     <dependencies>
         <dependency>
             <groupId>io.github.xiechanglei</groupId>
-            <artifactId>xie-cell-starter-jpa</artifactId>
+            <artifactId>xie-cell-starter-rbac-core</artifactId>
         </dependency>
     </dependencies>
 

@@ -114,18 +114,13 @@ public class RbacUser extends UUIDAndTimeEntity {
     /**
      * 一共一个构建管理员的方法，用于系统初始化的时候，判断是否有管理员，如果没有就创建一个
      */
-    public final void buildAdmin(String adminName) {
-        this.setId(null);
-        this.userStatus = EnableStatus.ENABLED;
-        this.userSerial = DEFAULT_USER_SERIAL;
-        this.nickName = adminName;
-        this.userName = adminName;
-        configAdmin();
-    }
-
-    /**
-     * 如果子类需要对admin进行特殊处理，可以重写这个方法
-     */
-    public void configAdmin() {
+    public static RbacUser buildAdmin(String adminName) {
+        RbacUser admin = new RbacUser();
+        admin.setId(null);
+        admin.userStatus = EnableStatus.ENABLED;
+        admin.userSerial = DEFAULT_USER_SERIAL;
+        admin.nickName = adminName;
+        admin.userName = adminName;
+        return admin;
     }
 }
