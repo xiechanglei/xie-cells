@@ -14,7 +14,6 @@ import org.hibernate.annotations.Comment;
  */
 @Getter
 @Setter
-@MappedSuperclass
 @NoArgsConstructor
 @Entity
 @Table(name = "rbac_user",
