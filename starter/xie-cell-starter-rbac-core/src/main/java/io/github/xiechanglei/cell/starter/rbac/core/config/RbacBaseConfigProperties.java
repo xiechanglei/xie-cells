@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @ConfigurationProperties(prefix = "cell.rbac.base")
-public class RbacCellConfigProperties {
+public class RbacBaseConfigProperties {
     /**
      * 当前模块的名称，书要用于模块权限的全量diff，如果是分体式架构模式下，不同的模块应该使用不同的moduleName,否则会出现权限入库的时候缺失
      */
@@ -35,7 +35,12 @@ public class RbacCellConfigProperties {
     private String tokenName = "auth-token";
 
     /**
-     * token 密钥
+     * token 密钥，用于aes加密
      */
-    private String tokenSecret = "cell-rbac";
+    private String tokenSecret = "cell-rbac-pass";
+
+    /**
+     * token iv ,用于aes加密的iv
+     */
+    private String tokenIv = "cell-rbac-iv";
 }

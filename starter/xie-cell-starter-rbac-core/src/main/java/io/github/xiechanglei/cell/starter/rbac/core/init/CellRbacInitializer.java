@@ -1,7 +1,7 @@
 package io.github.xiechanglei.cell.starter.rbac.core.init;
 
-import io.github.xiechanglei.cell.common.lang.string.StringHelpers;
-import io.github.xiechanglei.cell.starter.rbac.core.config.RbacCellConfigProperties;
+import io.github.xiechanglei.cell.common.lang.string.StringHelper;
+import io.github.xiechanglei.cell.starter.rbac.core.config.RbacBaseConfigProperties;
 import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacCode;
 import io.github.xiechanglei.cell.starter.rbac.core.provide.RbacBean;
 import io.github.xiechanglei.cell.starter.rbac.core.provide.RbacPermission;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 @ConditionalOnProperty(prefix = "cell.rbac.base", name = "enable", havingValue = "true", matchIfMissing = true)
 public class CellRbacInitializer implements ApplicationContextAware {
 
-    private final RbacCellConfigProperties rbacCellConfigProperties;
+    private final RbacBaseConfigProperties rbacBaseConfigProperties;
 
     private final RbacCodeRepo rbacCodeRepo;
 
@@ -44,11 +44,11 @@ public class CellRbacInitializer implements ApplicationContextAware {
 
     @Override
     public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
-        if ("default".equals(rbacCellConfigProperties.getModuleName())) {
+        if ("default".equals(rbacBaseConfigProperties.getModuleName())) {
             log.warn("当前模块的名称为默认值default，分体式架构下请在不同的模块的配置文件中配置各自的cell.rbac.base.module-name属性，建议使用当前模块的包名作为模块名称");
         }
         Map<String, RbacCode> rbacCodes = scanPermission(applicationContext);
-        List<RbacCode> all = rbacCodeRepo.findByRefModule(rbacCellConfigProperties.getModuleName());
+        List<RbacCode> all = rbacCodeRepo.findByRefModule(rbacBaseConfigProperties.getModuleName());
         Map<String, RbacCode> allMap = all.stream().collect(Collectors.toMap(RbacCode::getCode, Function.identity()));
 
         List<RbacCode> toSave = new ArrayList<>();
@@ -58,8 +58,8 @@ public class CellRbacInitializer implements ApplicationContextAware {
             if (existing == null) { // 如果不存在，则新增
                 toSave.add(code);
             } else {
-                if (StringHelpers.isDifferent(existing.getName(), code.getName())
-                        || StringHelpers.isDifferent(existing.getDescription(), code.getDescription())
+                if (StringHelper.isDifferent(existing.getName(), code.getName())
+                        || StringHelper.isDifferent(existing.getDescription(), code.getDescription())
                         || existing.getLogStatus() != code.getLogStatus()) {
                     existing.setName(code.getName());
                     existing.setDescription(code.getDescription());
@@ -102,7 +102,7 @@ public class CellRbacInitializer implements ApplicationContextAware {
         }
         // 将权限码转换为RbacCode对象
         Map<String, RbacCode> rbacCodeMap = new HashMap<>();
-        permissionMap.forEach((code, permission) -> rbacCodeMap.put(code, RbacCode.create(permission.code(), permission.name(), permission.description(), rbacCellConfigProperties.getModuleName(), permission.log())));
+        permissionMap.forEach((code, permission) -> rbacCodeMap.put(code, RbacCode.create(permission.code(), permission.name(), permission.description(), rbacBaseConfigProperties.getModuleName(), permission.log())));
         return rbacCodeMap;
     }
 }

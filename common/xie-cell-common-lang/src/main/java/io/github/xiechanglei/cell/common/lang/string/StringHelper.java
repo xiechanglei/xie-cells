@@ -7,7 +7,7 @@ import lombok.experimental.UtilityClass;
  * 提供常用的字符串操作方法
  */
 @UtilityClass
-public class StringHelpers {
+public class StringHelper {
 
     /**
      * 检查字符串是否为空或null
@@ -37,6 +37,12 @@ public class StringHelpers {
         }
         return true;
     }
+
+
+    public static boolean isNotBlank(String value) {
+        return !isBlank(value);
+    }
+
 
     /**
      * 判断两个字符串是否相同
