@@ -13,7 +13,7 @@ public interface RbacTokenInfoBuilder {
     Class<? extends RbacTokenInfo> getTokenClass();
 
     /**
-     * 初始化 Token 信息
+     * 使用序列号产生 Token 信息，主要用于登陆产生的token
      * <p>
      * 使用 {@link RbacUser} 对象来初始化 Token 信息。可以在此方法中根据用户的认证信息设置 Token 的各项数据。
      * </p>
@@ -23,7 +23,7 @@ public interface RbacTokenInfoBuilder {
     RbacTokenInfo createWithSerial(RbacUser user);
 
     /**
-     * 初始化 Token 信息
+     * 使用特征值产生 Token 信息，主要用于非登陆场景，比如交给第三方调用接口，或者内嵌当前系统的页面
      * <p>
      * 使用 {@link RbacUser} 对象来初始化 Token 信息。可以在此方法中根据用户的认证信息设置 Token 的各项数据。
      * </p>
