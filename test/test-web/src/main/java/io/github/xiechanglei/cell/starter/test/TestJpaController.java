@@ -4,7 +4,7 @@ import io.github.xiechanglei.cell.starter.jpa.auto.base.EntityClass;
 import io.github.xiechanglei.cell.starter.jpa.auto.task.DeleteById;
 import io.github.xiechanglei.cell.starter.jpa.auto.task.FindAll;
 import io.github.xiechanglei.cell.starter.rbac.core.provide.RbacBean;
-import io.github.xiechanglei.cell.starter.rbac.core.provide.RbacPermission;
+import io.github.xiechanglei.cell.starter.rbac.core.provide.ApiPermission;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,14 +29,14 @@ public class TestJpaController {
 
     @DeleteById
     @RequestMapping("/test/jpa/deleteById")
-    @RbacPermission(name = "删除用户", code = "user:delete", description = "删除用户信息")
+    @ApiPermission(name = "删除用户", code = "user:delete", description = "删除用户信息")
     public void deleteById() {
     }
 
 
     @FindAll(ignoreFields = "password")
     @RequestMapping("/test/jpa/findAll1")
-    @RbacPermission(name = "查询用户", code = "user:search1", description = "查询用户信息")
+    @ApiPermission(name = "查询用户", code = "user:search1", description = "查询用户信息")
     public void findAll1() {
     }
 }

@@ -1,6 +1,5 @@
 package io.github.xiechanglei.cell.starter.rbac.core.entity;
 
-import io.github.xiechanglei.cell.starter.jpa.entity.EnableStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -51,15 +50,6 @@ public class RbacCode {
     @Column(name = "ref_module", length = 100)
     @Comment("所属模块")
     private String refModule;
-
-
-    /**
-     * 是否记录日志的用户自定义级别，用户可以指定该字段的值用以覆盖logStatus的值，日志是否记录的策略取决于该字段的值，若该字段为null，则取logStatus的值
-     */
-    @Column(name = "log_status_set", length = 10)
-    @Enumerated(EnumType.STRING)
-    @Comment("是否日志记录的用户自定义级别，0:禁用，1:启用，null:使用log_status的值")
-    private EnableStatus logStatusUserDefined;
 
 
     public static RbacCode create(String code, String name, String description, String refModule) {

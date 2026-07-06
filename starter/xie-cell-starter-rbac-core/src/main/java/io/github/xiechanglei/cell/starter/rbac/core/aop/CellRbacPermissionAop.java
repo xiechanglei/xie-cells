@@ -2,11 +2,12 @@ package io.github.xiechanglei.cell.starter.rbac.core.aop;
 
 import io.github.xiechanglei.cell.common.bean.exception.NoPermissionException;
 import io.github.xiechanglei.cell.common.bean.exception.UnauthorizedException;
+import io.github.xiechanglei.cell.common.lang.string.StringHelper;
 import io.github.xiechanglei.cell.starter.jpa.entity.EnableStatus;
 import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacCode;
 import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacLog;
 import io.github.xiechanglei.cell.starter.rbac.core.promotion.UserAuthedInfo;
-import io.github.xiechanglei.cell.starter.rbac.core.provide.RbacPermission;
+import io.github.xiechanglei.cell.starter.rbac.core.provide.ApiPermission;
 import io.github.xiechanglei.cell.starter.rbac.core.provide.RbacTokenInfo;
 import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacCodeRepo;
 import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacLogRepo;
@@ -54,7 +55,7 @@ public class CellRbacPermissionAop {
     /**
      * 首先在request中获取当前用户，然后查询用户是否拥有当前请求所需要的权限码
      */
-    @Before("@annotation(io.github.xiechanglei.cell.starter.rbac.core.provide.RbacPermission)")
+    @Before("@annotation(io.github.xiechanglei.cell.starter.rbac.core.provide.ApiPermission)")
     public void before(JoinPoint joinPoint) {
         // 获取当前登陆的用户信息，如果没有登陆，则抛出未登陆
         RbacTokenInfo tokenInfo = rbacTokenService.getCurrentTokenInfo().orElseThrow(() -> UnauthorizedException.INSTANCE);
@@ -64,25 +65,18 @@ public class CellRbacPermissionAop {
 
         // 获取当前请求所需要的权限码
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        RbacPermission rbacPermission = signature.getMethod().getAnnotation(RbacPermission.class);
-        RbacCode rbacCode;
+        ApiPermission apiPermission = signature.getMethod().getAnnotation(ApiPermission.class);
 
-        if (userAuthedInfo.isAdmin()) {
-            // do sql query
-            rbacCode = rbacCodeRepo.findById(rbacPermission.code()).orElse(null);
-        } else {
-
+        if (StringHelper.isNotBlank(apiPermission.code()) && !userAuthedInfo.isAdmin()) {
             //查询当前用户是否拥有当前请求所需要的权限码，如果没有，则抛出未授权异常 do sql query
-            Optional<RbacCode> rbacCodeOp = rbacCodeRepo.findByUserIdAndCode(tokenInfo.getUserId(), rbacPermission.code());
-            rbacCode = rbacCodeOp.orElseThrow(() -> NoPermissionException.INSTANCE);
+            Optional<RbacCode> rbacCodeOp = rbacCodeRepo.findByUserIdAndCode(tokenInfo.getUserId(), apiPermission.code());
+            rbacCodeOp.orElseThrow(() -> NoPermissionException.INSTANCE);
         }
 
-        if (rbacCode != null) {
-            // 判断是否需要记录日志
-            if (rbacCode.getLogStatusUserDefined() == EnableStatus.ENABLED || (rbacCode.getLogStatusUserDefined() == EnableStatus.DISABLED && rbacPermission.log())) {
-                // 记录日志
-                doLog(rbacCode, tokenInfo);
-            }
+        // 判断是否需要记录日志
+        if (apiPermission.log()) {
+            // 记录日志
+            doLog(apiPermission, tokenInfo);
         }
 
     }
@@ -117,16 +111,13 @@ public class CellRbacPermissionAop {
 
     /**
      * 记录日志
-     *
-     * @param rbacCode  权限码
-     * @param tokenInfo 用户信息
      */
-    private void doLog(RbacCode rbacCode, RbacTokenInfo tokenInfo) {
+    private void doLog(ApiPermission apiPermission, RbacTokenInfo tokenInfo) {
         HttpServletRequest request = RequestHandler.getCurrentRequest();
         String currentRequestIp = RequestHandler.getCurrentRequestIp();
         RbacLog rbacLog = new RbacLog();
         rbacLog.setUserId(tokenInfo.getUserId());
-        rbacLog.setLogTitle(rbacCode.getName());
+        rbacLog.setLogTitle(apiPermission.name());
         rbacLog.setLogPath(request.getRequestURI());
         rbacLog.setLogAddress(currentRequestIp);
         rbacLogRepo.save(rbacLog);
