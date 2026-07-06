@@ -44,17 +44,12 @@ public class RbacUserController {
 
     private final RbacRoleRepo rbacRoleRepo;
 
-    private final RbacCodeRepo rbacCodeRepo;
-
     private final RbacRoleUserRepo rbacRoleUserRepo;
 
     private final RbacTokenService rbacTokenService;
 
     private final RbacLogRepo rbacLogRepo;
 
-    private final RbacBaseConfigProperties rbacBaseConfigProperties;
-
-    private final RbacUserAuthedService rbacUserAuthedService;
 
     private final List<RbacUserCustomStrategy> rbacUserCustomStrategies;
 

@@ -115,12 +115,12 @@ public class CellRbacPermissionAop {
     /**
      * 记录日志
      */
-    private void doLog(PermissionCell permissonCell, RbacTokenInfo tokenInfo) {
+    private void doLog(PermissionCell permissionCell, RbacTokenInfo tokenInfo) {
         HttpServletRequest request = RequestHandler.getCurrentRequest();
         String currentRequestIp = RequestHandler.getCurrentRequestIp();
         RbacLog rbacLog = new RbacLog();
         rbacLog.setUserId(tokenInfo.getUserId());
-        rbacLog.setLogTitle(permissonCell.name());
+        rbacLog.setLogTitle(permissionCell.name());
         rbacLog.setLogPath(request.getRequestURI());
         rbacLog.setLogAddress(currentRequestIp);
         rbacLogRepo.save(rbacLog);
