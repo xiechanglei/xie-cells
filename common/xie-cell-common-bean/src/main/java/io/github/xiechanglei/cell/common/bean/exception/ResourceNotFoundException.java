@@ -14,4 +14,5 @@ import lombok.Setter;
 @Getter
 @RequiredArgsConstructor
 public class ResourceNotFoundException extends RuntimeException {
+    public static final ResourceNotFoundException INSTANCE = new ResourceNotFoundException();
 }

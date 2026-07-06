@@ -7,4 +7,5 @@ package io.github.xiechanglei.cell.common.bean.exception;
  * @date 2025/7/10
  */
 public class NoPermissionException extends RuntimeException {
+    public static final NoPermissionException INSTANCE = new NoPermissionException();
 }

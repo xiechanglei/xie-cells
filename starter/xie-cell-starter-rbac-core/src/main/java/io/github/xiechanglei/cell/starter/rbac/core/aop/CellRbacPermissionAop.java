@@ -5,10 +5,12 @@ import io.github.xiechanglei.cell.common.bean.exception.UnauthorizedException;
 import io.github.xiechanglei.cell.starter.jpa.entity.EnableStatus;
 import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacCode;
 import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacLog;
+import io.github.xiechanglei.cell.starter.rbac.core.promotion.UserAuthedInfo;
 import io.github.xiechanglei.cell.starter.rbac.core.provide.RbacPermission;
 import io.github.xiechanglei.cell.starter.rbac.core.provide.RbacTokenInfo;
 import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacCodeRepo;
 import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacLogRepo;
+import io.github.xiechanglei.cell.starter.rbac.core.token.CellRbacUserAuthedService;
 import io.github.xiechanglei.cell.starter.rbac.core.token.RbacTokenService;
 import io.github.xiechanglei.cell.starter.web.utils.RequestHandler;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +24,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -46,12 +49,7 @@ public class CellRbacPermissionAop {
 
     private final RbacLogRepo rbacLogRepo;
 
-
-    // 未登陆异常
-    private final UnauthorizedException unauthorizedException = new UnauthorizedException();
-
-    // 无权限异常
-    private final NoPermissionException noPermissionException = new NoPermissionException();
+    private final CellRbacUserAuthedService cellRbacUserAuthedService;
 
     /**
      * 首先在request中获取当前用户，然后查询用户是否拥有当前请求所需要的权限码
@@ -59,22 +57,62 @@ public class CellRbacPermissionAop {
     @Before("@annotation(io.github.xiechanglei.cell.starter.rbac.core.provide.RbacPermission)")
     public void before(JoinPoint joinPoint) {
         // 获取当前登陆的用户信息，如果没有登陆，则抛出未登陆
-        RbacTokenInfo tokenInfo = rbacTokenService.getCurrentTokenInfo().orElseThrow(() -> unauthorizedException);
+        RbacTokenInfo tokenInfo = rbacTokenService.getCurrentTokenInfo().orElseThrow(() -> UnauthorizedException.INSTANCE);
+
+        // 获取当前登陆用户的认证信息并进行信息校验 do sql query
+        UserAuthedInfo userAuthedInfo = checkUserAuthedInfo(cellRbacUserAuthedService.loadUserAuthedInfo(), tokenInfo);
 
         // 获取当前请求所需要的权限码
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         RbacPermission rbacPermission = signature.getMethod().getAnnotation(RbacPermission.class);
+        RbacCode rbacCode;
 
-        //查询当前用户是否拥有当前请求所需要的权限码，如果没有，则抛出未授权异常
-        Optional<RbacCode> rbacCodeOp = rbacCodeRepo.findByUserIdAndCode(tokenInfo.getUserId(), rbacPermission.code());
-        RbacCode rbacCode = rbacCodeOp.orElseThrow(() -> noPermissionException);
+        if (userAuthedInfo.isAdmin()) {
+            // do sql query
+            rbacCode = rbacCodeRepo.findById(rbacPermission.code()).orElse(null);
+        } else {
 
-        // 判断是否需要记录日志
-        if (rbacCode.getLogStatusUserDefined() == EnableStatus.ENABLED || (rbacCode.getLogStatusUserDefined() == EnableStatus.DISABLED && rbacPermission.log())) {
-            // 记录日志
-            doLog(rbacCode, tokenInfo);
+            //查询当前用户是否拥有当前请求所需要的权限码，如果没有，则抛出未授权异常 do sql query
+            Optional<RbacCode> rbacCodeOp = rbacCodeRepo.findByUserIdAndCode(tokenInfo.getUserId(), rbacPermission.code());
+            rbacCode = rbacCodeOp.orElseThrow(() -> NoPermissionException.INSTANCE);
         }
 
+        if (rbacCode != null) {
+            // 判断是否需要记录日志
+            if (rbacCode.getLogStatusUserDefined() == EnableStatus.ENABLED || (rbacCode.getLogStatusUserDefined() == EnableStatus.DISABLED && rbacPermission.log())) {
+                // 记录日志
+                doLog(rbacCode, tokenInfo);
+            }
+        }
+
+    }
+
+
+    /**
+     * 校验用户认证信息
+     */
+    private UserAuthedInfo checkUserAuthedInfo(UserAuthedInfo userAuthedInfo, RbacTokenInfo tokenInfo) {
+        if (userAuthedInfo == null) {
+            // 用户不存在
+            throw UnauthorizedException.INSTANCE;
+        }
+        // 校验用户状态
+        if (userAuthedInfo.getEnableStatus() != EnableStatus.ENABLED) {
+            throw UnauthorizedException.INSTANCE;
+        }
+
+        // 特征值模式，不会检验serialNumber，直接成功
+        if (tokenInfo.getFeature() != null && tokenInfo.getFeature().equals(userAuthedInfo.getFeature())) {
+            return userAuthedInfo;
+        }
+
+        // 校验serial
+        if (!Objects.equals(tokenInfo.getSerialNumber(), userAuthedInfo.getUserSerial())) {
+            throw UnauthorizedException.INSTANCE;
+        }
+
+
+        return userAuthedInfo;
     }
 
     /**

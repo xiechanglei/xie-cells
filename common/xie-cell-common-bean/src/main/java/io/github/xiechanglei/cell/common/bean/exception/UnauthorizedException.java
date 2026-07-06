@@ -7,4 +7,5 @@ package io.github.xiechanglei.cell.common.bean.exception;
  * @date 2025/7/10
  */
 public class UnauthorizedException extends RuntimeException {
+    public static final UnauthorizedException INSTANCE = new UnauthorizedException();
 }
