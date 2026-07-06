@@ -1,42 +1,40 @@
 package io.github.xiechanglei.cell.starter.rbac.web.controller;
 
-import io.github.xiechanglei.cell.common.bean.message.DataFit;
-import io.github.xiechanglei.cell.common.lang.string.StringHelper;
+import io.github.xiechanglei.cell.common.lang.string.StringOptional;
 import io.github.xiechanglei.cell.starter.jpa.entity.EnableStatus;
 import io.github.xiechanglei.cell.starter.rbac.core.config.RbacBaseConfigProperties;
+import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacRole;
+import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacRoleUser;
 import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacUser;
-import io.github.xiechanglei.cell.starter.rbac.core.promotion.UserAuthedInfo;
-import io.github.xiechanglei.cell.starter.rbac.core.provide.CurrentUser;
-import io.github.xiechanglei.cell.starter.rbac.core.provide.CurrentUserId;
 import io.github.xiechanglei.cell.starter.rbac.core.provide.PermissionCell;
-import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacCodeRepo;
-import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacRoleRepo;
-import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacUserRepo;
+import io.github.xiechanglei.cell.starter.rbac.core.provide.RbacUserCustomStrategy;
+import io.github.xiechanglei.cell.starter.rbac.core.repo.*;
 import io.github.xiechanglei.cell.starter.rbac.core.token.RbacTokenService;
 import io.github.xiechanglei.cell.starter.rbac.core.token.RbacUserAuthedService;
 import io.github.xiechanglei.cell.starter.rbac.web.error.BusinessError;
 import io.github.xiechanglei.cell.starter.rbac.web.nest.RbacPasswordService;
-import jakarta.servlet.http.Cookie;
+import io.github.xiechanglei.cell.starter.rbac.web.provide.User;
+import io.github.xiechanglei.cell.starter.rbac.web.provide.UserId;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 /**
- * 登陆相关的接口
- *
- * @author xie
- * @date 2026/7/6
+ * 角色相关的接口控制器
+ * <p>
+ * 该控制器包含了与角色相关的所有 API 接口，包括角色的查询、创建、更新、禁用、启用、删除以及权限管理等功能。
+ * </p>
  */
+@RestController("toolsRbacUserController")
 @RequiredArgsConstructor
-@RestController
 @ConditionalOnProperty(prefix = "cell.rbac.base", name = "enable", havingValue = "true", matchIfMissing = true)
 public class RbacUserController {
 
@@ -48,117 +46,194 @@ public class RbacUserController {
 
     private final RbacCodeRepo rbacCodeRepo;
 
+    private final RbacRoleUserRepo rbacRoleUserRepo;
+
     private final RbacTokenService rbacTokenService;
+
+    private final RbacLogRepo rbacLogRepo;
 
     private final RbacBaseConfigProperties rbacBaseConfigProperties;
 
     private final RbacUserAuthedService rbacUserAuthedService;
 
+    private final List<RbacUserCustomStrategy> rbacUserCustomStrategies;
+
+    @RequestMapping("/rbac/user/all")
+    @PermissionCell(code = "RBAC::USER::QUERY", name = "查询用户")
+    public List<RbacUser> all() {
+        return rbacUserRepo.findAll();
+    }
 
     /**
-     * 用户登录接口
+     * 查询用户
+     * <p>
+     * 该方法用于根据查询关键字查找用户，并分页返回结果。
+     * </p>
      *
-     * @param userName     用户名
+     * @param word        查询关键字
+     * @param pageRequest 分页请求信息
+     * @return 用户分页结果
+     */
+    @RequestMapping("/rbac/user/query")
+    @PermissionCell(code = "RBAC::USER::QUERY", name = "查询用户")
+    public Page<RbacUser> searchUser(String word, PageRequest pageRequest) {
+        return rbacUserRepo.queryUser(word, pageRequest);
+    }
+
+    /**
+     * 获取用户信息
+     */
+    @RequestMapping("/rbac/user/get")
+    @PermissionCell(code = "RBAC::USER::QUERY", name = "查询用户")
+    public RbacUser getUserInfo(@User RbacUser user) {
+        return user;
+    }
+
+    /**
+     * 获取用户的角色信息
+     */
+    @RequestMapping("/rbac/user/roles")
+    @PermissionCell(code = "RBAC::USER::QUERY", name = "查询用户")
+    public List<RbacRole> getUserRoles(String userId) {
+        return rbacRoleRepo.findRoleByUserId(userId);
+    }
+
+
+    /**
+     * 添加用户
+     * <p>
+     * 该方法用于添加新用户。用户需要提供用户名和密码，系统会进行唯一性检查，防止重复添加用户。
+     * </p>
+     *
+     * @param user         新用户信息
      * @param userPassword 用户密码
-     * @return 登录成功后返回的token字符串
      */
-    @RequestMapping("/rbac/auth/login")
-    public String login(String userName, String userPassword) {
-        // 加密密码
-        userPassword = rbacPasswordService.encode(userPassword);
-
-        // 查询用户
-        RbacUser rbacUser = rbacUserRepo.findByUserNameAndUserPassword(userName, userPassword).orElseThrow(() -> BusinessError.USER.USER_LOGIN_FAILED);
-
-        // 如果用户被禁用，则抛出异常
-        if (rbacUser.getUserStatus() == EnableStatus.DISABLED) {
-            throw BusinessError.USER.USER_LOGIN_FAILED;
+    @RequestMapping("/rbac/user/add")
+    @PermissionCell(code = "RBAC::USER::ADD", name = "添加用户")
+    public void addUser(RbacUser user, String userPassword) {
+        StringOptional.of(user.getUserName()).orElseThrow(BusinessError.USER.USER_NAME_IS_EMPTY);
+        if (rbacUserRepo.existsByUserName(user.getUserName())) {
+            throw BusinessError.USER.USER_EXISTS;
         }
-
-        // 生成token
-        String token = rbacTokenService.buildSerialTokenInfo(rbacUser);
-
-        // 写入cookie
-        Cookie cookie = new Cookie(rbacBaseConfigProperties.getTokenName(), token);
-        cookie.setPath("/"); // 设置cookie的路径
-        cookie.setMaxAge(-1); // 浏览器关闭之后失效
-        cookie.setHttpOnly(true); // 设置httpOnly，防止js获取cookie
-//        cookie.setSecure(true); // 设置cookie只能通过https协议传输
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        Objects.requireNonNull(Objects.requireNonNull(attributes).getResponse()).addCookie(cookie);
-
-        return token;
+        RbacUser createdUser = new RbacUser();
+        createdUser.setUserName(user.getUserName());
+        createdUser.setUserPassword(rbacPasswordService.encode(userPassword));
+        createdUser.setNickName(user.getNickName());
+        createdUser.setPhoneNumber(user.getPhoneNumber());
+        createdUser.setEmail(user.getEmail());
+        createdUser.setAddress(user.getAddress());
+        createdUser.setUserStatus(EnableStatus.ENABLED);
+        rbacUserRepo.save(createdUser);
     }
 
-
     /**
-     * 修改当前用户的密码
+     * 更新用户信息
      * <p>
-     * 用户需要提供旧密码以进行验证，修改密码成功后会返回新的 token。
-     * </p>
-     *
-     * @param newPass 新密码
-     * @param oldPass 旧密码，若未传入，则不进行旧密码校验
-     * @param user    当前登录用户的授权信息
-     * @return 修改密码成功后生成的新 token
-     */
-    @RequestMapping("/rbac/auth/changePass")
-    @PermissionCell
-    public String changeMyPass(String newPass, String oldPass, @CurrentUser RbacUser user) {
-        if (StringHelper.isDifferent(user.getUserPassword(), rbacPasswordService.encode(oldPass))) {
-            throw BusinessError.USER.USER_OLD_PASSWORD_ERROR;
-        }
-        user.setUserPassword(rbacPasswordService.encode(newPass));
-        user.updateSerial();  // 修改密码时更新序列号
-        rbacUserRepo.save(user);
-        return rbacTokenService.buildSerialTokenInfo(user);
-    }
-
-
-    /**
-     * 获取当前用户的信息
-     * <p>
-     * 返回当前用户的信息，用户的角色
+     * 该方法用于更新指定用户的详细信息。更新的内容包括除了 id、用户名、密码、状态、序列号、创建时间和更新时间之外的所有用户属性。
      * </p>
      */
-    @RequestMapping("/rbac/auth/detail")
-    @PermissionCell
-    public DataFit getCurrentUserInfo(@CurrentUser RbacUser user) {
-        return DataFit.of("user", user).fit("roles", rbacRoleRepo.findRoleByUserId(user.getId()));
-    }
-
-    /**
-     * 获取当前用户的权限信息，可用以控制前端相关交互功能的显示与隐藏
-     */
-    @RequestMapping("/rbac/auth/permission")
-    @PermissionCell
-    public DataFit permission(@CurrentUserId String userId) {
-        boolean admin = false;
-        List<String> userPermissionCode = null;
-        UserAuthedInfo userAuthedInfo = rbacUserAuthedService.loadUserAuthedInfo();
-        if (userAuthedInfo != null) {
-            admin = userAuthedInfo.isAdmin();
-            if (!admin) { // 如果不是admin,获取用户的权限码列表
-                userPermissionCode = rbacCodeRepo.findUserPermissionCode(userId);
-            }
-        }
-        return DataFit.of("admin", admin).fit("permissionCode", userPermissionCode);
-    }
-
-
-    /**
-     * 更新当前用户信息
-     *
-     * @param newUser 包含新信息的用户对象
-     */
-    @PermissionCell
-    @RequestMapping("/rbac/auth/update")
-    public void updateCurrentUserInfo(@CurrentUser RbacUser user, RbacUser newUser) {
+    @RequestMapping("/rbac/user/update")
+    @PermissionCell(code = "RBAC::USER::EDIT", name = "编辑用户")
+    public void updateUser(@User RbacUser user, RbacUser newUser) {
         user.setNickName(newUser.getNickName());
         user.setPhoneNumber(newUser.getPhoneNumber());
         user.setEmail(newUser.getEmail());
         user.setAddress(newUser.getAddress());
         rbacUserRepo.save(user);
+    }
+
+    /**
+     * 修改用户的密码
+     * <p>
+     * 该方法用于修改指定用户的密码。用户需要提供新的密码，以及当前用户的身份验证信息。
+     * </p>
+     */
+    @RequestMapping("/rbac/user/changePass")
+    @PermissionCell(code = "RBAC::USER::EDIT", name = "编辑用户")
+    public void changePass(String userPassword, String userId) {
+        rbacUserRepo.updatePassword(userId, rbacPasswordService.encode(userPassword));
+    }
+
+    /**
+     * 禁用用户
+     * <p>
+     * 该方法用于禁用指定的用户。如果用户是管理员，则无法被禁用。
+     * </p>
+     */
+    @RequestMapping("/rbac/user/disable")
+    @PermissionCell(code = "RBAC::USER::EDIT", name = "编辑用户")
+    public void disable(String userId) {
+        rbacUserRepo.changeUserStatus(userId, EnableStatus.DISABLED);
+    }
+
+    /**
+     * 启用用户
+     * <p>
+     * 该方法用于启用被禁用的用户。
+     * </p>
+     */
+    @RequestMapping("/rbac/user/enable")
+    @PermissionCell(code = "RBAC::USER::EDIT", name = "编辑用户")
+    public void enable(String userId) {
+        rbacUserRepo.changeUserStatus(userId, EnableStatus.ENABLED);
+    }
+
+
+    /**
+     * 给用户授予角色
+     * <p>
+     * 该方法用于给指定用户授予一个或多个角色。
+     * </p>
+     *
+     * @param userId  用户信息
+     * @param roleIds 角色 ID 数组
+     */
+    @RequestMapping("/rbac/user/grantRole")
+    @PermissionCell(code = "RBAC::USER::EDIT", name = "编辑用户")
+    @Transactional
+    public void grantRoleToUser(@UserId String userId, String[] roleIds) {
+        if (roleIds == null) {
+            roleIds = new String[0];
+        }
+        List<String> allByAdmin = rbacRoleRepo.findAllAdminId();
+        boolean newRoleHasAdmin = false; // 新的角色是否有管理员
+        for (String roleId : roleIds) {
+            for (String adminId : allByAdmin) {
+                if (adminId.equals(roleId)) {
+                    newRoleHasAdmin = true;
+                    break;
+                }
+            }
+        }
+        // 如果新的角色没有管理员，并且如果除了这个人之外没有管理员了，抛出异常
+        if (!newRoleHasAdmin) {
+            if (!rbacRoleUserRepo.hasAdminUserWithOutUserId(userId)) {
+                throw BusinessError.USER.USER_ADMIN_ROLE;
+            }
+        }
+        //先更新
+        rbacRoleUserRepo.deleteByUserId(userId);
+        for (String roleId : roleIds) {
+            rbacRoleUserRepo.save(new RbacRoleUser(roleId, userId));
+        }
+    }
+
+
+    /**
+     * 删除用户,管理员角色用户不允许被删除
+     */
+    @RequestMapping("/rbac/user/delete")
+    @PermissionCell(code = "RBAC::USER::DELETE", name = "删除用户")
+    public void deleteUser(String userId) {
+        if (rbacRoleRepo.isAdminUser(userId)) {
+            throw BusinessError.USER.USER_CAN_NOT_DELETE;
+        }
+        rbacUserRepo.deleteUser(userId);
+        rbacRoleUserRepo.deleteByUserId(userId);
+        rbacLogRepo.deleteByUserId(userId);
+        if (rbacUserCustomStrategies != null && !rbacUserCustomStrategies.isEmpty()) {
+            rbacUserCustomStrategies.forEach(s -> s.clear(userId));
+        }
     }
 
 
@@ -167,9 +242,9 @@ public class RbacUserController {
      *
      * @param user 用户
      */
-    @RequestMapping("/rbac/auth/feature/get")
-    @PermissionCell
-    public String getFeature(@CurrentUser RbacUser user) {
+    @RequestMapping("/rbac/user/feature/get")
+    @PermissionCell(code = "RBAC::USER::QUERY", name = "查询用户")
+    public String getFeature(@User RbacUser user) {
         rbacTokenService.buildFeatureTokenInfo(user);
         if (!StringUtils.hasText(user.getFeature())) {
             return resetFeature(user);
@@ -179,13 +254,13 @@ public class RbacUserController {
 
 
     /**
-     * 重新生成当前用户的授权码
+     * 重新生成用户授权码
      *
      * @param user 用户
      */
-    @RequestMapping("/rbac/auth/feature/reset")
-    @PermissionCell
-    public String resetFeature(@CurrentUser RbacUser user) {
+    @RequestMapping("/rbac/user/feature/reset")
+    @PermissionCell(code = "RBAC::USER::EDIT", name = "编辑用户")
+    public String resetFeature(@User RbacUser user) {
         String feature = UUID.randomUUID().toString().replace("-", "");
         user.setFeature(feature);
         rbacUserRepo.save(user);

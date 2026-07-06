@@ -93,13 +93,6 @@ public class RbacUser extends UUIDAndTimeEntity {
     @Comment("用户授权值，基于授权值产生的token不会过期，除非修改了授权值")
     private String feature;
 
-    public RbacUser(String id, Short userSerial, String feature, EnableStatus userStatus) {
-        this.setId(id);
-        this.userSerial = userSerial;
-        this.feature = feature;
-        this.userStatus = userStatus;
-    }
-
     /**
      * 更新用户版本号
      */
