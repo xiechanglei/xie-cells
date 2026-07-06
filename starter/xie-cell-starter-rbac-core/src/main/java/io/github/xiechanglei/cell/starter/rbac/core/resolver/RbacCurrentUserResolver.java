@@ -5,7 +5,7 @@ import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacUser;
 import io.github.xiechanglei.cell.starter.rbac.core.provide.CurrentUser;
 import io.github.xiechanglei.cell.starter.rbac.core.provide.CurrentUserId;
 import io.github.xiechanglei.cell.starter.rbac.core.provide.RbacTokenInfo;
-import io.github.xiechanglei.cell.starter.rbac.core.token.CellRbacUserAuthedService;
+import io.github.xiechanglei.cell.starter.rbac.core.token.RbacUserAuthedService;
 import io.github.xiechanglei.cell.starter.rbac.core.token.RbacTokenService;
 import io.github.xiechanglei.cell.starter.web.resolver.WebResolver;
 import jakarta.annotation.Nonnull;
@@ -29,7 +29,7 @@ import java.util.Optional;
 public class RbacCurrentUserResolver implements HandlerMethodArgumentResolver {
 
     private final RbacTokenService rbacTokenService;
-    private final CellRbacUserAuthedService rbacUserAuthedService;
+    private final RbacUserAuthedService rbacUserAuthedService;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {

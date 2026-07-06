@@ -10,7 +10,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Comment;
 
 /**
- * 用户表
+ * 用户基础信息表，如果需要扩展用户信息，可以选择增加扩展表，增加相关的管理接口
  */
 @Getter
 @Setter

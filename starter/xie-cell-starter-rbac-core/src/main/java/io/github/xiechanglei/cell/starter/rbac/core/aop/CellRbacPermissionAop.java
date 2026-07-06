@@ -4,14 +4,15 @@ import io.github.xiechanglei.cell.common.bean.exception.NoPermissionException;
 import io.github.xiechanglei.cell.common.bean.exception.UnauthorizedException;
 import io.github.xiechanglei.cell.common.lang.string.StringHelper;
 import io.github.xiechanglei.cell.starter.jpa.entity.EnableStatus;
+import io.github.xiechanglei.cell.starter.rbac.core.config.RbacBaseConfigProperties;
 import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacCode;
 import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacLog;
 import io.github.xiechanglei.cell.starter.rbac.core.promotion.UserAuthedInfo;
-import io.github.xiechanglei.cell.starter.rbac.core.provide.ApiPermission;
+import io.github.xiechanglei.cell.starter.rbac.core.provide.PermissionCell;
 import io.github.xiechanglei.cell.starter.rbac.core.provide.RbacTokenInfo;
 import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacCodeRepo;
 import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacLogRepo;
-import io.github.xiechanglei.cell.starter.rbac.core.token.CellRbacUserAuthedService;
+import io.github.xiechanglei.cell.starter.rbac.core.token.RbacUserAuthedService;
 import io.github.xiechanglei.cell.starter.rbac.core.token.RbacTokenService;
 import io.github.xiechanglei.cell.starter.web.utils.RequestHandler;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,7 +41,7 @@ import java.util.Optional;
 @Aspect
 @RequiredArgsConstructor
 @Component
-@ConditionalOnProperty(prefix = "cell.rbac.base", name = "filter-auth", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "cell.rbac.base", name = "enable", havingValue = "true", matchIfMissing = true)
 @Log4j2
 public class CellRbacPermissionAop {
 
@@ -50,7 +51,9 @@ public class CellRbacPermissionAop {
 
     private final RbacLogRepo rbacLogRepo;
 
-    private final CellRbacUserAuthedService cellRbacUserAuthedService;
+    private final RbacUserAuthedService rbacUserAuthedService;
+
+    private final RbacBaseConfigProperties rbacBaseConfigProperties;
 
     /**
      * 首先在request中获取当前用户，然后查询用户是否拥有当前请求所需要的权限码
@@ -61,22 +64,22 @@ public class CellRbacPermissionAop {
         RbacTokenInfo tokenInfo = rbacTokenService.getCurrentTokenInfo().orElseThrow(() -> UnauthorizedException.INSTANCE);
 
         // 获取当前登陆用户的认证信息并进行信息校验 do sql query
-        UserAuthedInfo userAuthedInfo = checkUserAuthedInfo(cellRbacUserAuthedService.loadUserAuthedInfo(), tokenInfo);
+        UserAuthedInfo userAuthedInfo = checkUserAuthedInfo(rbacUserAuthedService.loadUserAuthedInfo(), tokenInfo);
 
         // 获取当前请求所需要的权限码
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        ApiPermission apiPermission = signature.getMethod().getAnnotation(ApiPermission.class);
+        PermissionCell permissionCell = signature.getMethod().getAnnotation(PermissionCell.class);
 
-        if (StringHelper.isNotBlank(apiPermission.code()) && !userAuthedInfo.isAdmin()) {
+        if (StringHelper.isNotBlank(permissionCell.code()) && !userAuthedInfo.isAdmin() && rbacBaseConfigProperties.isFilterAuth()) {
             //查询当前用户是否拥有当前请求所需要的权限码，如果没有，则抛出未授权异常 do sql query
-            Optional<RbacCode> rbacCodeOp = rbacCodeRepo.findByUserIdAndCode(tokenInfo.getUserId(), apiPermission.code());
+            Optional<RbacCode> rbacCodeOp = rbacCodeRepo.findByUserIdAndCode(tokenInfo.getUserId(), permissionCell.code());
             rbacCodeOp.orElseThrow(() -> NoPermissionException.INSTANCE);
         }
 
         // 判断是否需要记录日志
-        if (apiPermission.log()) {
+        if (permissionCell.log()) {
             // 记录日志
-            doLog(apiPermission, tokenInfo);
+            doLog(permissionCell, tokenInfo);
         }
 
     }
@@ -112,12 +115,12 @@ public class CellRbacPermissionAop {
     /**
      * 记录日志
      */
-    private void doLog(ApiPermission apiPermission, RbacTokenInfo tokenInfo) {
+    private void doLog(PermissionCell permissonCell, RbacTokenInfo tokenInfo) {
         HttpServletRequest request = RequestHandler.getCurrentRequest();
         String currentRequestIp = RequestHandler.getCurrentRequestIp();
         RbacLog rbacLog = new RbacLog();
         rbacLog.setUserId(tokenInfo.getUserId());
-        rbacLog.setLogTitle(apiPermission.name());
+        rbacLog.setLogTitle(permissonCell.name());
         rbacLog.setLogPath(request.getRequestURI());
         rbacLog.setLogAddress(currentRequestIp);
         rbacLogRepo.save(rbacLog);

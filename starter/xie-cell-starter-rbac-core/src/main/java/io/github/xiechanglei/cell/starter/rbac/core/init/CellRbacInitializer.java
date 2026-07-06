@@ -4,7 +4,7 @@ import io.github.xiechanglei.cell.common.lang.string.StringHelper;
 import io.github.xiechanglei.cell.starter.rbac.core.config.RbacBaseConfigProperties;
 import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacCode;
 import io.github.xiechanglei.cell.starter.rbac.core.provide.RbacBean;
-import io.github.xiechanglei.cell.starter.rbac.core.provide.ApiPermission;
+import io.github.xiechanglei.cell.starter.rbac.core.provide.PermissionCell;
 import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacCodeRepo;
 import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacRoleCodeRepo;
 import lombok.RequiredArgsConstructor;
@@ -84,14 +84,14 @@ public class CellRbacInitializer implements ApplicationContextAware {
      * 解析所有的被@RbacBean注解的类，提取其中所有被@RbacPermission注解的方法，获取@RbacPermission注解对象并且返回,注意，需要去重
      */
     private Map<String, RbacCode> scanPermission(ApplicationContext applicationContext) {
-        Map<String, ApiPermission> permissionMap = new HashMap<>();
+        Map<String, PermissionCell> permissionMap = new HashMap<>();
         // 获取所有的被@RbacBean注解的类
         Map<String, Object> beans = applicationContext.getBeansWithAnnotation(RbacBean.class);
         for (Object bean : beans.values()) {
             // 获取类上的所有方法
             for (var method : AopUtils.getTargetClass(bean).getDeclaredMethods()) {
                 // 获取方法上的@RbacPermission注解
-                ApiPermission rbacPermission = method.getAnnotation(ApiPermission.class);
+                PermissionCell rbacPermission = method.getAnnotation(PermissionCell.class);
                 if (rbacPermission != null && StringHelper.isNotBlank(rbacPermission.code())) {
                     // 如果权限码已经存在，则不进行覆盖，避免权限码冲突
                     permissionMap.putIfAbsent(rbacPermission.code(), rbacPermission);

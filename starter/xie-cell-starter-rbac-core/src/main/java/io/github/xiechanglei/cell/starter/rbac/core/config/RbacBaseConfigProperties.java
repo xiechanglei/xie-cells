@@ -25,7 +25,7 @@ public class RbacBaseConfigProperties {
     private boolean enable = true;
 
     /**
-     * 是否拦截权限,默认为true, 某些情况下,开启权限配置,但是不拦截
+     * 是否拦截权限,默认为true, 关闭的情况下，只拦截登陆，不拦截权限
      */
     private boolean filterAuth = true;
 

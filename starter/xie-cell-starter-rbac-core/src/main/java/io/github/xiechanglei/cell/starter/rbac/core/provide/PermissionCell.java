@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ApiPermission {
+public @interface PermissionCell {
     // 权限码，全局唯一，建议使用模块编码:功能编码:操作类型的方式进行命名，方便权限码的管理
     // 如果检索的时候发现权限码已经在数据库中其他的模块下存在，该模块码不会被入库，最终导致的结果是该接口无法访问
     // 如果code的值为空，表示仅仅只拦截登陆，不进行权限码的校验

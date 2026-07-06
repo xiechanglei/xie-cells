@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface RbacUserRepo extends JpaRepository<RbacUser, String> {
     boolean existsByUserName(String username);
@@ -13,4 +15,6 @@ public interface RbacUserRepo extends JpaRepository<RbacUser, String> {
     // 查询某个用户的认证字段信息，包含是否拥有管理员角色等信息
     @Query("select u.id as id, u.userSerial as userSerial, u.feature as feature, u.enableStatus as enableStatus, exists(select 1 from RbacRoleUser ru join RbacRole r on ru.roleId = r.id where ru.userId = u.id and r.admin = true) as admin from RbacUser u where u.id = :userId")
     UserAuthedInfo findUserAuthedInfoById(String userId);
+
+    Optional<RbacUser> findByUserNameAndUserPassword(String userName, String userPassword);
 }

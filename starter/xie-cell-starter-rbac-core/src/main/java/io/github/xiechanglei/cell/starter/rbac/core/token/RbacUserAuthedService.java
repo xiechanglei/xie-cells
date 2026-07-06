@@ -18,7 +18,7 @@ import java.util.Optional;
  */
 @Service
 @RequiredArgsConstructor
-public class CellRbacUserAuthedService {
+public class RbacUserAuthedService {
     private static final String REQUEST_CURRENT_AUTHED_ATTR_NAME = "cellRbacCurrentAuthedUser";
     private static final String REQUEST_CURRENT_USER_ATTR_NAME = "cellRbacCurrentUser";
 

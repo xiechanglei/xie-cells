@@ -20,6 +20,9 @@ public class Md5Helper {
      */
     public static String encode(String str) {
         try {
+            if (str == null) {
+                return null;
+            }
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] md5 = md.digest(str.getBytes(StandardCharsets.UTF_8));
             StringBuilder sb = new StringBuilder();
