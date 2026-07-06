@@ -54,14 +54,6 @@ public class RbacCode {
 
 
     /**
-     * 是否记录日志，代码生成的级别
-     */
-    @Column(name = "log_status", length = 10, nullable = false)
-    @Enumerated(EnumType.STRING)
-    @Comment("是否日志记录，0:禁用，1:启用")
-    private EnableStatus logStatus;
-
-    /**
      * 是否记录日志的用户自定义级别，用户可以指定该字段的值用以覆盖logStatus的值，日志是否记录的策略取决于该字段的值，若该字段为null，则取logStatus的值
      */
     @Column(name = "log_status_set", length = 10)
@@ -70,13 +62,12 @@ public class RbacCode {
     private EnableStatus logStatusUserDefined;
 
 
-    public static RbacCode create(String code, String name, String description, String refModule, boolean logStatus) {
+    public static RbacCode create(String code, String name, String description, String refModule) {
         RbacCode rbacCode = new RbacCode();
         rbacCode.setCode(code);
         rbacCode.setName(name);
         rbacCode.setDescription(description);
         rbacCode.setRefModule(refModule);
-        rbacCode.setLogStatus(logStatus ? EnableStatus.ENABLED : EnableStatus.DISABLED);
         return rbacCode;
     }
 

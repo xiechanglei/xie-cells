@@ -59,11 +59,9 @@ public class CellRbacInitializer implements ApplicationContextAware {
                 toSave.add(code);
             } else {
                 if (StringHelper.isDifferent(existing.getName(), code.getName())
-                        || StringHelper.isDifferent(existing.getDescription(), code.getDescription())
-                        || existing.getLogStatus() != code.getLogStatus()) {
+                        || StringHelper.isDifferent(existing.getDescription(), code.getDescription())) {
                     existing.setName(code.getName());
                     existing.setDescription(code.getDescription());
-                    existing.setLogStatus(code.getLogStatus());
                     toSave.add(existing); // 需要更新
                 }
             }
@@ -102,7 +100,7 @@ public class CellRbacInitializer implements ApplicationContextAware {
         }
         // 将权限码转换为RbacCode对象
         Map<String, RbacCode> rbacCodeMap = new HashMap<>();
-        permissionMap.forEach((code, permission) -> rbacCodeMap.put(code, RbacCode.create(permission.code(), permission.name(), permission.description(), rbacBaseConfigProperties.getModuleName(), permission.log())));
+        permissionMap.forEach((code, permission) -> rbacCodeMap.put(code, RbacCode.create(permission.code(), permission.name(), permission.description(), rbacBaseConfigProperties.getModuleName())));
         return rbacCodeMap;
     }
 }

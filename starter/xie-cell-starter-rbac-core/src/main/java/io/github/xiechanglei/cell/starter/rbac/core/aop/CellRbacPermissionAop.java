@@ -70,7 +70,7 @@ public class CellRbacPermissionAop {
         RbacCode rbacCode = rbacCodeOp.orElseThrow(() -> noPermissionException);
 
         // 判断是否需要记录日志
-        if (rbacCode.getLogStatusUserDefined() == EnableStatus.ENABLED || (rbacCode.getLogStatusUserDefined() == EnableStatus.DISABLED && rbacCode.getLogStatus() == EnableStatus.ENABLED)) {
+        if (rbacCode.getLogStatusUserDefined() == EnableStatus.ENABLED || (rbacCode.getLogStatusUserDefined() == EnableStatus.DISABLED && rbacPermission.log())) {
             // 记录日志
             doLog(rbacCode, tokenInfo);
         }
