@@ -1,11 +1,11 @@
 package io.github.xiechanglei.cell.starter.web.advice.exception;
 
 import io.github.xiechanglei.cell.common.bean.exception.BusinessException;
+import io.github.xiechanglei.cell.common.bean.exception.NoPermissionException;
 import io.github.xiechanglei.cell.common.bean.exception.ResourceNotFoundException;
 import io.github.xiechanglei.cell.common.bean.exception.UnauthorizedException;
 import io.github.xiechanglei.cell.common.bean.message.WebResult;
 import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -63,7 +63,7 @@ public class CellWebExceptionAdvice {
     }
 
     /**
-     * 处理未授权异常。
+     * 处理未登陆异常
      */
     @ExceptionHandler(value = UnauthorizedException.class)
     public ResponseEntity<?> handleUnauthorizedException(UnauthorizedException e) {
@@ -71,11 +71,19 @@ public class CellWebExceptionAdvice {
     }
 
     /**
+     * 处理无权限异常
+     */
+    @ExceptionHandler(value = NoPermissionException.class)
+    public ResponseEntity<?> handleNoPermissionException(NoPermissionException e) {
+        return ResponseEntity.status(403).body(WebResult.failed(e.getMessage()));
+    }
+
+    /**
      * 处理静态资源未找到的异常。
      */
     @ExceptionHandler(value = {NoResourceFoundException.class, ResourceNotFoundException.class})
-    public void handleNoResourceFoundException(HttpServletResponse response) {
-        response.setStatus(404);
+    public ResponseEntity<?> handleNoResourceFoundException() {
+        return ResponseEntity.status(404).body(WebResult.failed("资源未找到"));
     }
 
     /**
