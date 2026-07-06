@@ -1,9 +1,8 @@
-package io.github.xiechanglei.cell.starter.rbac.core.filter;
+package io.github.xiechanglei.cell.starter.rbac.core.token;
 
 import io.github.xiechanglei.cell.common.lang.string.StringOptional;
 import io.github.xiechanglei.cell.starter.rbac.core.config.RbacBaseConfigProperties;
 import io.github.xiechanglei.cell.starter.rbac.core.provide.RbacTokenInfo;
-import io.github.xiechanglei.cell.starter.rbac.core.token.RbacTokenService;
 import io.github.xiechanglei.cell.starter.web.utils.RequestHandler;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

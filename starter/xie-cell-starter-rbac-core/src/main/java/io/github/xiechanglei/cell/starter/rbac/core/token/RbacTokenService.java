@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 /**
  * Token信息管理器类，用于管理和构建Token信息。
  * <p>
@@ -44,8 +46,8 @@ public class RbacTokenService {
         }
     }
 
-    public RbacTokenInfo getCurrentTokenInfo() {
-        return (RbacTokenInfo) RequestHandler.getCurrentRequest().getAttribute(REQUEST_TOKEN_ATTR_NAME);
+    public Optional<RbacTokenInfo> getCurrentTokenInfo() {
+        return Optional.ofNullable((RbacTokenInfo) RequestHandler.getCurrentRequest().getAttribute(REQUEST_TOKEN_ATTR_NAME));
     }
 
     public void setCurrentTokenInfo(RbacTokenInfo tokenInfo) {

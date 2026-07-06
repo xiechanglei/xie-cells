@@ -1,12 +1,28 @@
 package io.github.xiechanglei.cell.starter.rbac.core.aop;
 
+import io.github.xiechanglei.cell.common.bean.exception.NoPermissionException;
+import io.github.xiechanglei.cell.common.bean.exception.UnauthorizedException;
+import io.github.xiechanglei.cell.starter.jpa.entity.EnableStatus;
+import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacCode;
+import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacLog;
+import io.github.xiechanglei.cell.starter.rbac.core.provide.RbacPermission;
+import io.github.xiechanglei.cell.starter.rbac.core.provide.RbacTokenInfo;
+import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacCodeRepo;
+import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacLogRepo;
+import io.github.xiechanglei.cell.starter.rbac.core.token.RbacTokenService;
+import io.github.xiechanglei.cell.starter.web.utils.RequestHandler;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 /**
  * 拦截器，拦截带有@RbacPermission 注解的方法，对当前登陆的用户进行权限校验，
@@ -24,8 +40,57 @@ import org.springframework.stereotype.Component;
 @Log4j2
 public class CellRbacPermissionAop {
 
+    private final RbacTokenService rbacTokenService;
+
+    private final RbacCodeRepo rbacCodeRepo;
+
+    private final RbacLogRepo rbacLogRepo;
+
+
+    // 未登陆异常
+    private final UnauthorizedException unauthorizedException = new UnauthorizedException();
+
+    // 无权限异常
+    private final NoPermissionException noPermissionException = new NoPermissionException();
+
+    /**
+     * 首先在request中获取当前用户，然后查询用户是否拥有当前请求所需要的权限码
+     */
     @Before("@annotation(io.github.xiechanglei.cell.starter.rbac.core.provide.RbacPermission)")
-    public void before() {
-        log.info("执行了CellRbacPermissionAop:before");
+    public void before(JoinPoint joinPoint) {
+        // 获取当前登陆的用户信息，如果没有登陆，则抛出未登陆
+        RbacTokenInfo tokenInfo = rbacTokenService.getCurrentTokenInfo().orElseThrow(() -> unauthorizedException);
+
+        // 获取当前请求所需要的权限码
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        RbacPermission rbacPermission = signature.getMethod().getAnnotation(RbacPermission.class);
+
+        //查询当前用户是否拥有当前请求所需要的权限码，如果没有，则抛出未授权异常
+        Optional<RbacCode> rbacCodeOp = rbacCodeRepo.findByUserIdAndCode(tokenInfo.getUserId(), rbacPermission.code());
+        RbacCode rbacCode = rbacCodeOp.orElseThrow(() -> noPermissionException);
+
+        // 判断是否需要记录日志
+        if (rbacCode.getLogStatusUserDefined() == EnableStatus.ENABLED || (rbacCode.getLogStatusUserDefined() == EnableStatus.DISABLED && rbacCode.getLogStatus() == EnableStatus.ENABLED)) {
+            // 记录日志
+            doLog(rbacCode, tokenInfo);
+        }
+
+    }
+
+    /**
+     * 记录日志
+     *
+     * @param rbacCode  权限码
+     * @param tokenInfo 用户信息
+     */
+    private void doLog(RbacCode rbacCode, RbacTokenInfo tokenInfo) {
+        HttpServletRequest request = RequestHandler.getCurrentRequest();
+        String currentRequestIp = RequestHandler.getCurrentRequestIp();
+        RbacLog rbacLog = new RbacLog();
+        rbacLog.setUserId(tokenInfo.getUserId());
+        rbacLog.setLogTitle(rbacCode.getName());
+        rbacLog.setLogPath(request.getRequestURI());
+        rbacLog.setLogAddress(currentRequestIp);
+        rbacLogRepo.save(rbacLog);
     }
 }

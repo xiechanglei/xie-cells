@@ -1,7 +1,7 @@
 package io.github.xiechanglei.cell.common.bean.exception;
 
 /**
- * 未授权异常，表示用户未登录或没有权限访问某个资源
+ * 未登陆异常，表示用户未登录
  *
  * @author xie
  * @date 2025/7/10
