@@ -15,7 +15,7 @@ public class StringHelper {
      * @param str 待检查的字符串
      * @return 如果字符串为null或空字符串则返回true，否则返回false
      */
-    public boolean isEmpty(String str) {
+    public static boolean isEmpty(String str) {
         return str == null || str.isEmpty();
     }
 
@@ -25,7 +25,7 @@ public class StringHelper {
      * @param str 待检查的字符串
      * @return 如果字符串为null、空字符串或只包含空白字符则返回true，否则返回false
      */
-    public boolean isBlank(String str) {
+    public static boolean isBlank(String str) {
         if (isEmpty(str)) {
             return true;
         }
@@ -52,7 +52,7 @@ public class StringHelper {
      * @param str2 第二个字符串
      * @return 如果两个字符串相同则返回true，否则返回false
      */
-    public boolean isSame(String str1, String str2) {
+    public static boolean isSame(String str1, String str2) {
         if (str1 == null && str2 == null) {
             return true;
         }
@@ -63,7 +63,7 @@ public class StringHelper {
     }
 
 
-    public boolean isDifferent(String str1, String str2) {
+    public static boolean isDifferent(String str1, String str2) {
         return !isSame(str1, str2);
     }
 }
