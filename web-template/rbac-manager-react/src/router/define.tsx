@@ -6,7 +6,10 @@ export const routes: RouteObject[] = [
     {path: "/", Component: lazy(() => import("@/pages/Main"))},
 ]
 
-
+/**
+ * 为路由添加加载器
+ * @param loader
+ */
 export const withLoader = (loader: LoaderFunction) => {
     const appendLoaderToRoutes = (_routes: RouteObject[]): RouteObject[] => {
         return _routes.map(route => {
