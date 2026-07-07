@@ -26,4 +26,7 @@ public interface RbacCodeRepo extends JpaRepository<RbacCode, String> {
     @Query("select distinct c.code from RbacCode c join RbacRoleCode rc on c.code = rc.perCode join RbacRoleUser ru on rc.roleId = ru.roleId join RbacRole r on ru.roleId = r.id where r.roleStatus = io.github.xiechanglei.cell.starter.jpa.entity.EnableStatus.ENABLED and " +
             "ru.userId = :userId")
     List<String> findUserPermissionCode(String userId);
+
+    @Query("select distinct c.code from RbacCode c")
+    List<String> findAllCode();
 }

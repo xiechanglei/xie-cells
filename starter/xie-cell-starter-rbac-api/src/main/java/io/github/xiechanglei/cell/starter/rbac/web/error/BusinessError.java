@@ -19,7 +19,6 @@ public interface BusinessError {
         BusinessException USER_EXISTS = BusinessException.of(1000007, "用户已存在");
         BusinessException USER_NOT_LOGIN = BusinessException.of(1000008, "用户未登陆");
         BusinessException USER_CAN_NOT_OPERATE = BusinessException.of(1000009, "超级管理员无法禁用");
-        BusinessException USER_ADMIN_ROLE = BusinessException.of(1000010, "系统至少存在一个用户拥有管理员角色");
         BusinessException USER_NAME_IS_EMPTY = BusinessException.of(1000011, "用户名不能为空");
         BusinessException USER_UPDATE_FAILED = BusinessException.of(1000013, "用户更新失败");
         BusinessException USER_CAN_NOT_DELETE = BusinessException.of(1000014, "用户无法删除");
@@ -33,6 +32,9 @@ public interface BusinessError {
         BusinessException ROLE_CAN_NOT_DELETE = BusinessException.of(1200002, "角色下有用户，不能删除");
         BusinessException ROLE_NOT_EXISTS = BusinessException.of(1200003, "角色不存在");
         BusinessException ROLE_CAN_NOT_OPERATE = BusinessException.of(1200004, "系统角色，无法操作");
+        BusinessException ROLE_HAS_BEEN_GRANTED = BusinessException.of(1200005, "角色已分配，请勿重复分配");
+        BusinessException ROLE_NOT_GRANTED = BusinessException.of(1200006, "用户未分配该角色");
+        BusinessException USER_ADMIN_ROLE = BusinessException.of(1200007, "系统至少存在一个用户拥有管理员角色");
     }
 
     /**

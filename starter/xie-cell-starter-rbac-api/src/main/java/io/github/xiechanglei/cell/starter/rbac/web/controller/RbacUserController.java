@@ -3,17 +3,17 @@ package io.github.xiechanglei.cell.starter.rbac.web.controller;
 import io.github.xiechanglei.cell.common.lang.string.StringOptional;
 import io.github.xiechanglei.cell.starter.jpa.entity.EnableStatus;
 import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacRole;
-import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacRoleUser;
 import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacUser;
 import io.github.xiechanglei.cell.starter.rbac.core.provide.Permission;
 import io.github.xiechanglei.cell.starter.rbac.core.provide.RbacUserCustomStrategy;
-import io.github.xiechanglei.cell.starter.rbac.core.repo.*;
+import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacLogRepo;
+import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacRoleRepo;
+import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacRoleUserRepo;
+import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacUserRepo;
 import io.github.xiechanglei.cell.starter.rbac.core.token.RbacTokenService;
 import io.github.xiechanglei.cell.starter.rbac.web.error.BusinessError;
 import io.github.xiechanglei.cell.starter.rbac.web.nest.RbacPasswordService;
 import io.github.xiechanglei.cell.starter.rbac.web.provide.User;
-import io.github.xiechanglei.cell.starter.rbac.web.provide.UserId;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.Page;
@@ -172,48 +172,6 @@ public class RbacUserController {
         return rbacRoleRepo.findRoleByUserId(userId);
     }
 
-
-
-
-    /**
-     * todo this place should be refactored, use addRoleToUser and removeRoleFromUser
-     * 给用户授予角色
-     * <p>
-     * 该方法用于给指定用户授予一个或多个角色。
-     * </p>
-     *
-     * @param userId  用户信息
-     * @param roleIds 角色 ID 数组
-     */
-    @RequestMapping("/rbac/user/grantRole")
-    @Permission(code = "RBAC::USER::GRANT", name = "授予用户角色")
-    @Transactional
-    public void grantRoleToUser(@UserId String userId, String[] roleIds) {
-        if (roleIds == null) {
-            roleIds = new String[0];
-        }
-        List<String> allByAdmin = rbacRoleRepo.findAllAdminId();
-        boolean newRoleHasAdmin = false; // 新的角色是否有管理员
-        for (String roleId : roleIds) {
-            for (String adminId : allByAdmin) {
-                if (adminId.equals(roleId)) {
-                    newRoleHasAdmin = true;
-                    break;
-                }
-            }
-        }
-        // 如果新的角色没有管理员，并且如果除了这个人之外没有管理员了，抛出异常
-        if (!newRoleHasAdmin) {
-            if (!rbacRoleUserRepo.hasAdminUserWithOutUserId(userId)) {
-                throw BusinessError.USER.USER_ADMIN_ROLE;
-            }
-        }
-        //先更新
-        rbacRoleUserRepo.deleteByUserId(userId);
-        for (String roleId : roleIds) {
-            rbacRoleUserRepo.save(new RbacRoleUser(roleId, userId));
-        }
-    }
 
 
     /**

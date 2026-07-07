@@ -1,16 +1,14 @@
 package io.github.xiechanglei.cell.starter.rbac.web.controller;
 
-import io.github.xiechanglei.cell.common.bean.message.DataFit;
 import io.github.xiechanglei.cell.starter.jpa.entity.EnableStatus;
-import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacCode;
-import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacRole;
-import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacUser;
+import io.github.xiechanglei.cell.starter.rbac.core.entity.*;
 import io.github.xiechanglei.cell.starter.rbac.core.provide.Permission;
 import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacCodeRepo;
 import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacRoleCodeRepo;
 import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacRoleRepo;
 import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacRoleUserRepo;
 import io.github.xiechanglei.cell.starter.rbac.web.error.BusinessError;
+import io.github.xiechanglei.cell.starter.rbac.web.provide.UserId;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -22,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 角色相关的接口控制器
@@ -120,6 +120,11 @@ public class RbacRoleController {
     @RequestMapping("/rbac/role/update")
     @Transactional
     public void editRole(String roleName, String roleId, String roleRemark) {
+        // 管理员角色不可操作
+        if (rbacRoleRepo.isAdminRole(roleId)) {
+            throw BusinessError.ROLE.ROLE_CAN_NOT_OPERATE;
+        }
+
         if (rbacRoleRepo.existsByRoleNameAndIdNot(roleName, roleId)) {
             throw BusinessError.ROLE.ROLE_EXISTS;
         }
@@ -137,6 +142,10 @@ public class RbacRoleController {
     @Permission(code = "RBAC::ROLE::EDIT", name = "更新角色")
     @RequestMapping("/rbac/role/disable")
     public void disableRole(String roleId) {
+        // 管理员角色不可操作
+        if (rbacRoleRepo.isAdminRole(roleId)) {
+            throw BusinessError.ROLE.ROLE_CAN_NOT_OPERATE;
+        }
         rbacRoleRepo.updateRoleStatusById(roleId, EnableStatus.DISABLED);
     }
 
@@ -151,6 +160,10 @@ public class RbacRoleController {
     @Permission(code = "RBAC::ROLE::EDIT", name = "更新角色")
     @RequestMapping("/rbac/role/enable")
     public void enableRole(String roleId) {
+        // 管理员角色不可操作
+        if (rbacRoleRepo.isAdminRole(roleId)) {
+            throw BusinessError.ROLE.ROLE_CAN_NOT_OPERATE;
+        }
         rbacRoleRepo.updateRoleStatusById(roleId, EnableStatus.ENABLED);
     }
 
@@ -170,10 +183,9 @@ public class RbacRoleController {
         if (rbacRoleUserRepo.existsByRoleId(roleId)) {
             throw BusinessError.ROLE.ROLE_CAN_NOT_DELETE;
         }
-        // 角色不能是唯一的管理员角色
-        List<RbacRole> top2ByAdmin = rbacRoleRepo.findTop2ByAdmin(true);
-        if (top2ByAdmin.size() == 1 && top2ByAdmin.getFirst().getId().equals(roleId)) {
-            throw BusinessError.ROLE.ROLE_CAN_NOT_DELETE;
+        // 管理员角色不可操作
+        if (rbacRoleRepo.isAdminRole(roleId)) {
+            throw BusinessError.ROLE.ROLE_CAN_NOT_OPERATE;
         }
         // 删除角色关联的功能信息
         rbacRoleCodeRepo.deleteByRoleId(roleId);
@@ -218,7 +230,27 @@ public class RbacRoleController {
         if (permissionIds == null) {
             permissionIds = new String[0];
         }
-        rbacRoleService.grantResource(roleId, permissionIds);
+        // 判断角色是否存在
+        RbacRole rbacRole = rbacRoleRepo.findById(roleId).orElseThrow(() -> BusinessError.ROLE.ROLE_NOT_EXISTS);
+
+        // 管理员角色的权限由系统自动管理，不允许手动修改
+        if (rbacRole.isAdmin()) {
+            throw BusinessError.ROLE.ROLE_CAN_NOT_OPERATE;
+        }
+
+        // 对权限进行存在性以及去重处理，保证数据的合法性
+        List<String> allCode = rbacCodeRepo.findAllCode();
+        Set<String> allCodeSet = new HashSet<>(allCode);
+        Set<String> permissionCodeSet = new HashSet<>();
+        for (String permissionId : permissionIds) {
+            if (allCodeSet.contains(permissionId)) {
+                permissionCodeSet.add(permissionId);
+            }
+        }
+
+        // 入库
+        List<RbacRoleCode> list = permissionCodeSet.stream().map(perCode -> new RbacRoleCode(roleId, perCode)).toList();
+        rbacRoleCodeRepo.saveAll(list);
     }
 
 
@@ -235,8 +267,61 @@ public class RbacRoleController {
     @Permission(code = "RBAC::ROLE::QUERY", name = "查询角色")
     @RequestMapping("/rbac/role/users")
     public Page<RbacUser> getUserByRoleId(PageRequest pageRequest, String roleId) {
-        return rbacUserService.getUserByRoleId(pageRequest, roleId);
+        return rbacRoleUserRepo.findUserByRoleId(roleId, pageRequest);
     }
 
-    // TODO adduser to role  and remove user from role
+
+    /**
+     *
+     * 给用户授予角色
+     * <p>
+     * 该方法用于给指定用户授予一个或多个角色。
+     * </p>
+     *
+     * @param userId 用户信息
+     * @param roleId 角色 ID
+     */
+    @RequestMapping("/rbac/role/grant")
+    @Permission(code = "RBAC::ROLE::GRANT", name = "用户分配角色")
+    @Transactional
+    public void grantRoleToUser(@UserId String userId, String roleId) {
+        // 判断角色是否存在
+        rbacRoleRepo.findById(roleId).orElseThrow(() -> BusinessError.ROLE.ROLE_NOT_EXISTS);
+
+        // 判断用户是否已经拥有该角色
+        if (rbacRoleUserRepo.existsByUserIdAndRoleId(userId, roleId)) {
+            throw BusinessError.ROLE.ROLE_HAS_BEEN_GRANTED;
+        }
+
+        rbacRoleUserRepo.save(new RbacRoleUser(roleId, userId));
+    }
+
+
+    /**
+     * 撤销用户角色
+     * <p>
+     * 该方法用于撤销指定用户的一个或多个角色，系统至少保留一个管理员角色用户。
+     * </p>
+     * @param userId 用户信息
+     * @param roleId 角色 ID
+     */
+    @RequestMapping("/rbac/role/revoke")
+    @Permission(code = "RBAC::ROLE::GRANT", name = "用户分配角色")
+    @Transactional
+    public void revokeRoleFromUser(@UserId String userId, String roleId) {
+        // 判断用户是否已经拥有该角色
+        if (!rbacRoleUserRepo.existsByUserIdAndRoleId(userId, roleId)) {
+            throw BusinessError.ROLE.ROLE_NOT_GRANTED;
+        }
+
+        //如果是管理员角色，需要检查是否还有其他管理员
+        if (rbacRoleRepo.isAdminRole(roleId)) {
+            if (!rbacRoleUserRepo.hasAdminUserWithOutUserId(userId)) {
+                throw BusinessError.ROLE.USER_ADMIN_ROLE;
+            }
+        }
+
+        // 删除用户和角色的关联
+        rbacRoleUserRepo.deleteByUserIdAndRoleId(userId, roleId);
+    }
 }

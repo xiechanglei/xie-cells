@@ -66,4 +66,7 @@ public interface RbacRoleRepo extends JpaRepository<RbacRole, String> {
     @Transactional
     @Query(value = "delete from RbacRole where id = ?1")
     void deleteById(@NonNull String id);
+
+    @Query("select case when count(r) > 0 then true else false end from RbacRole r where r.id = ?1 and r.admin = true")
+    boolean isAdminRole(String roleId);
 }
