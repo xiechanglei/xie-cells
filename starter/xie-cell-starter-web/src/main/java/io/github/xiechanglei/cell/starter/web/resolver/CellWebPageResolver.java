@@ -1,5 +1,6 @@
 package io.github.xiechanglei.cell.starter.web.resolver;
 
+import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.PageRequest;
@@ -75,7 +76,7 @@ public class CellWebPageResolver implements HandlerMethodArgumentResolver {
      * @throws IllegalArgumentException 如果分页参数无法解析为数字或其他错误
      */
     @Override
-    public PageRequest resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, @NonNull NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
+    public PageRequest resolveArgument(@Nonnull MethodParameter parameter, ModelAndViewContainer mavContainer, @NonNull NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         WebPageParam pageParam = new WebPageParam();
         try {
             pageParam.setPageNo(parsePage(webRequest.getParameter(cellWebResolverConfigProperties.getPageNoName())));

@@ -1,5 +1,6 @@
 package io.github.xiechanglei.cell.starter.jpa.query;
 
+import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -37,7 +38,7 @@ public interface JpaQueryProducer {
      * @param condition    查询条件
      * @param paramsValues 参数
      */
-    default JpaQueryProducer withBoolCheckCondition(boolean filter, String condition, Object... paramsValues) {
+    default JpaQueryProducer filterCondition(boolean filter, String condition, Object... paramsValues) {
         if (filter) {
             return withCondition(condition, paramsValues);
         }
@@ -181,6 +182,15 @@ public interface JpaQueryProducer {
     default <T> Page<T> getTuplePage(TupleConvertor<T> tupleConvertor, PageRequest pageRequest) {
         Page<Object> page = getPage(null, pageRequest);
         return new PageImpl<>(tupleConvertor.convertList(page.getContent()), pageRequest, page.getTotalElements());
+    }
+
+
+    static JpaQueryProducer createNamedQuery(EntityManager entityManager, String qlString) {
+        return new JpaQueryProducerImpl(entityManager, false, qlString.trim());
+    }
+
+    static JpaQueryProducer createNativeQuery(EntityManager entityManager, String sql) {
+        return new JpaQueryProducerImpl(entityManager, true, sql.trim());
     }
 
 }

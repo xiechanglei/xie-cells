@@ -29,7 +29,7 @@ public class JpaQueryProducerImpl implements JpaQueryProducer {
     /**
      * 查询语句
      **/
-    private String queryString;
+    private String queryString = "";
     /**
      * 查询参数
      **/
