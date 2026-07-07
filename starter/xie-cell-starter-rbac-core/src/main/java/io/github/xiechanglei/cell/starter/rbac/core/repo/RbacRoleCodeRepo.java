@@ -9,4 +9,8 @@ import java.util.List;
 @Repository
 public interface RbacRoleCodeRepo extends JpaRepository<RbacRoleCode, String> {
     void deleteByPerCodeIn(List<String> perCodes);
+
+    void deleteByRoleId(String roleId);
+
+    List<String> findAllPerCodeByRoleId(String roleId);
 }

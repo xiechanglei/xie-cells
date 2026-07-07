@@ -8,7 +8,7 @@ import io.github.xiechanglei.cell.starter.rbac.core.config.RbacBaseConfigPropert
 import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacCode;
 import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacLog;
 import io.github.xiechanglei.cell.starter.rbac.core.promotion.UserAuthedInfo;
-import io.github.xiechanglei.cell.starter.rbac.core.provide.PermissionCell;
+import io.github.xiechanglei.cell.starter.rbac.core.provide.Permission;
 import io.github.xiechanglei.cell.starter.rbac.core.provide.RbacTokenInfo;
 import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacCodeRepo;
 import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacLogRepo;
@@ -68,18 +68,18 @@ public class CellRbacPermissionAop {
 
         // 获取当前请求所需要的权限码
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        PermissionCell permissionCell = signature.getMethod().getAnnotation(PermissionCell.class);
+        Permission permission = signature.getMethod().getAnnotation(Permission.class);
 
-        if (StringHelper.isNotBlank(permissionCell.code()) && !userAuthedInfo.isAdmin() && rbacBaseConfigProperties.isFilterAuth()) {
+        if (StringHelper.isNotBlank(permission.code()) && !userAuthedInfo.isAdmin() && rbacBaseConfigProperties.isFilterAuth()) {
             //查询当前用户是否拥有当前请求所需要的权限码，如果没有，则抛出未授权异常 do sql query
-            Optional<RbacCode> rbacCodeOp = rbacCodeRepo.findByUserIdAndCode(tokenInfo.getUserId(), permissionCell.code());
+            Optional<RbacCode> rbacCodeOp = rbacCodeRepo.findByUserIdAndCode(tokenInfo.getUserId(), permission.code());
             rbacCodeOp.orElseThrow(() -> NoPermissionException.INSTANCE);
         }
 
         // 判断是否需要记录日志
-        if (permissionCell.log()) {
+        if (permission.log()) {
             // 记录日志
-            doLog(permissionCell, tokenInfo);
+            doLog(permission, tokenInfo);
         }
 
     }
@@ -115,12 +115,12 @@ public class CellRbacPermissionAop {
     /**
      * 记录日志
      */
-    private void doLog(PermissionCell permissionCell, RbacTokenInfo tokenInfo) {
+    private void doLog(Permission permission, RbacTokenInfo tokenInfo) {
         HttpServletRequest request = RequestHandler.getCurrentRequest();
         String currentRequestIp = RequestHandler.getCurrentRequestIp();
         RbacLog rbacLog = new RbacLog();
         rbacLog.setUserId(tokenInfo.getUserId());
-        rbacLog.setLogTitle(permissionCell.name());
+        rbacLog.setLogTitle(permission.name());
         rbacLog.setLogPath(request.getRequestURI());
         rbacLog.setLogAddress(currentRequestIp);
         rbacLogRepo.save(rbacLog);

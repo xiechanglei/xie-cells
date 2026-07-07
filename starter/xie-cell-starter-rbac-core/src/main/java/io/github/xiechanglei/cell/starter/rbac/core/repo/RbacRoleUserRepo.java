@@ -22,4 +22,6 @@ public interface RbacRoleUserRepo extends JpaRepository<RbacRoleUser, String> {
 
     @Query("select count(1) > 0 from RbacRoleUser a,RbacRole  b where a.roleId = b.id and b.admin = true and a.userId != ?1")
     boolean hasAdminUserWithOutUserId(String userId);
+
+    boolean existsByRoleId(String roleId);
 }

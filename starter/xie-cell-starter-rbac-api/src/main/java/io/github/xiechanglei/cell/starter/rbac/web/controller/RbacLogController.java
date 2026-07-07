@@ -3,7 +3,7 @@ package io.github.xiechanglei.cell.starter.rbac.web.controller;
 import io.github.xiechanglei.cell.starter.jpa.query.JpaQueryProducer;
 import io.github.xiechanglei.cell.starter.jpa.query.TupleConvertor;
 import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacLog;
-import io.github.xiechanglei.cell.starter.rbac.core.provide.PermissionCell;
+import io.github.xiechanglei.cell.starter.rbac.core.provide.Permission;
 import io.github.xiechanglei.cell.starter.rbac.web.qo.RbacLogQo;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +53,7 @@ public class RbacLogController {
      * 分页查询日志
      */
     @RequestMapping("/rbac/log/query")
-    @PermissionCell(code = "RBAC::LOG::QUERY", name = "查询日志")
+    @Permission(code = "RBAC::LOG::QUERY", name = "查询日志")
     public Page<RbacLogQo> query(String userId, String nickName, String logTitle, String logPath, String logAddress, Date logTimeStart, Date logTimeEnd, PageRequest pageRequest) {
         pageRequest.withSort(Sort.unsorted());
         return buildQuery(userId, nickName, logTitle, logPath, logAddress, logTimeStart, logTimeEnd).getTuplePage(tupleConvertor, pageRequest);

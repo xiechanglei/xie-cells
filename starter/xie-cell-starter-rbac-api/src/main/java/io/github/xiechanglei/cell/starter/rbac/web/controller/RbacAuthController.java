@@ -8,7 +8,7 @@ import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacUser;
 import io.github.xiechanglei.cell.starter.rbac.core.promotion.UserAuthedInfo;
 import io.github.xiechanglei.cell.starter.rbac.core.provide.CurrentUser;
 import io.github.xiechanglei.cell.starter.rbac.core.provide.CurrentUserId;
-import io.github.xiechanglei.cell.starter.rbac.core.provide.PermissionCell;
+import io.github.xiechanglei.cell.starter.rbac.core.provide.Permission;
 import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacCodeRepo;
 import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacRoleRepo;
 import io.github.xiechanglei.cell.starter.rbac.core.repo.RbacUserRepo;
@@ -103,7 +103,7 @@ public class RbacAuthController {
      * @return 修改密码成功后生成的新 token
      */
     @RequestMapping("/rbac/auth/changePass")
-    @PermissionCell
+    @Permission
     public String changeMyPass(String newPass, String oldPass, @CurrentUser RbacUser user) {
         if (StringHelper.isDifferent(user.getUserPassword(), rbacPasswordService.encode(oldPass))) {
             throw BusinessError.USER.USER_OLD_PASSWORD_ERROR;
@@ -122,7 +122,7 @@ public class RbacAuthController {
      * </p>
      */
     @RequestMapping("/rbac/auth/detail")
-    @PermissionCell
+    @Permission
     public DataFit getCurrentUserInfo(@CurrentUser RbacUser user) {
         return DataFit.of("user", user).fit("roles", rbacRoleRepo.findRoleByUserId(user.getId()));
     }
@@ -131,7 +131,7 @@ public class RbacAuthController {
      * 获取当前用户的权限信息，可用以控制前端相关交互功能的显示与隐藏
      */
     @RequestMapping("/rbac/auth/permission")
-    @PermissionCell
+    @Permission
     public DataFit permission(@CurrentUserId String userId) {
         boolean admin = false;
         List<String> userPermissionCode = null;
@@ -151,7 +151,7 @@ public class RbacAuthController {
      *
      * @param newUser 包含新信息的用户对象
      */
-    @PermissionCell
+    @Permission
     @RequestMapping("/rbac/auth/update")
     public void updateCurrentUserInfo(@CurrentUser RbacUser user, RbacUser newUser) {
         user.setNickName(newUser.getNickName());
@@ -168,7 +168,7 @@ public class RbacAuthController {
      * @param user 用户
      */
     @RequestMapping("/rbac/auth/feature/get")
-    @PermissionCell
+    @Permission
     public String getFeature(@CurrentUser RbacUser user) {
         rbacTokenService.buildFeatureTokenInfo(user);
         if (!StringUtils.hasText(user.getFeature())) {
@@ -184,7 +184,7 @@ public class RbacAuthController {
      * @param user 用户
      */
     @RequestMapping("/rbac/auth/feature/reset")
-    @PermissionCell
+    @Permission
     public String resetFeature(@CurrentUser RbacUser user) {
         String feature = UUID.randomUUID().toString().replace("-", "");
         user.setFeature(feature);

@@ -2,15 +2,13 @@ package io.github.xiechanglei.cell.starter.rbac.web.controller;
 
 import io.github.xiechanglei.cell.common.lang.string.StringOptional;
 import io.github.xiechanglei.cell.starter.jpa.entity.EnableStatus;
-import io.github.xiechanglei.cell.starter.rbac.core.config.RbacBaseConfigProperties;
 import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacRole;
 import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacRoleUser;
 import io.github.xiechanglei.cell.starter.rbac.core.entity.RbacUser;
-import io.github.xiechanglei.cell.starter.rbac.core.provide.PermissionCell;
+import io.github.xiechanglei.cell.starter.rbac.core.provide.Permission;
 import io.github.xiechanglei.cell.starter.rbac.core.provide.RbacUserCustomStrategy;
 import io.github.xiechanglei.cell.starter.rbac.core.repo.*;
 import io.github.xiechanglei.cell.starter.rbac.core.token.RbacTokenService;
-import io.github.xiechanglei.cell.starter.rbac.core.token.RbacUserAuthedService;
 import io.github.xiechanglei.cell.starter.rbac.web.error.BusinessError;
 import io.github.xiechanglei.cell.starter.rbac.web.nest.RbacPasswordService;
 import io.github.xiechanglei.cell.starter.rbac.web.provide.User;
@@ -54,7 +52,7 @@ public class RbacUserController {
     private final List<RbacUserCustomStrategy> rbacUserCustomStrategies;
 
     @RequestMapping("/rbac/user/all")
-    @PermissionCell(code = "RBAC::USER::QUERY", name = "查询用户")
+    @Permission(code = "RBAC::USER::QUERY", name = "查询用户")
     public List<RbacUser> all() {
         return rbacUserRepo.findAll();
     }
@@ -70,7 +68,7 @@ public class RbacUserController {
      * @return 用户分页结果
      */
     @RequestMapping("/rbac/user/query")
-    @PermissionCell(code = "RBAC::USER::QUERY", name = "查询用户")
+    @Permission(code = "RBAC::USER::QUERY", name = "查询用户")
     public Page<RbacUser> searchUser(String word, PageRequest pageRequest) {
         return rbacUserRepo.queryUser(word, pageRequest);
     }
@@ -79,20 +77,10 @@ public class RbacUserController {
      * 获取用户信息
      */
     @RequestMapping("/rbac/user/get")
-    @PermissionCell(code = "RBAC::USER::QUERY", name = "查询用户")
+    @Permission(code = "RBAC::USER::QUERY", name = "查询用户")
     public RbacUser getUserInfo(@User RbacUser user) {
         return user;
     }
-
-    /**
-     * 获取用户的角色信息
-     */
-    @RequestMapping("/rbac/user/roles")
-    @PermissionCell(code = "RBAC::USER::QUERY", name = "查询用户")
-    public List<RbacRole> getUserRoles(String userId) {
-        return rbacRoleRepo.findRoleByUserId(userId);
-    }
-
 
     /**
      * 添加用户
@@ -104,7 +92,7 @@ public class RbacUserController {
      * @param userPassword 用户密码
      */
     @RequestMapping("/rbac/user/add")
-    @PermissionCell(code = "RBAC::USER::ADD", name = "添加用户")
+    @Permission(code = "RBAC::USER::ADD", name = "添加用户")
     public void addUser(RbacUser user, String userPassword) {
         StringOptional.of(user.getUserName()).orElseThrow(BusinessError.USER.USER_NAME_IS_EMPTY);
         if (rbacUserRepo.existsByUserName(user.getUserName())) {
@@ -128,7 +116,7 @@ public class RbacUserController {
      * </p>
      */
     @RequestMapping("/rbac/user/update")
-    @PermissionCell(code = "RBAC::USER::EDIT", name = "编辑用户")
+    @Permission(code = "RBAC::USER::EDIT", name = "编辑用户")
     public void updateUser(@User RbacUser user, RbacUser newUser) {
         user.setNickName(newUser.getNickName());
         user.setPhoneNumber(newUser.getPhoneNumber());
@@ -144,7 +132,7 @@ public class RbacUserController {
      * </p>
      */
     @RequestMapping("/rbac/user/changePass")
-    @PermissionCell(code = "RBAC::USER::EDIT", name = "编辑用户")
+    @Permission(code = "RBAC::USER::EDIT", name = "编辑用户")
     public void changePass(String userPassword, String userId) {
         rbacUserRepo.updatePassword(userId, rbacPasswordService.encode(userPassword));
     }
@@ -156,7 +144,7 @@ public class RbacUserController {
      * </p>
      */
     @RequestMapping("/rbac/user/disable")
-    @PermissionCell(code = "RBAC::USER::EDIT", name = "编辑用户")
+    @Permission(code = "RBAC::USER::EDIT", name = "编辑用户")
     public void disable(String userId) {
         rbacUserRepo.changeUserStatus(userId, EnableStatus.DISABLED);
     }
@@ -168,13 +156,27 @@ public class RbacUserController {
      * </p>
      */
     @RequestMapping("/rbac/user/enable")
-    @PermissionCell(code = "RBAC::USER::EDIT", name = "编辑用户")
+    @Permission(code = "RBAC::USER::EDIT", name = "编辑用户")
     public void enable(String userId) {
         rbacUserRepo.changeUserStatus(userId, EnableStatus.ENABLED);
     }
 
 
+
     /**
+     * 获取用户的角色信息
+     */
+    @RequestMapping("/rbac/user/roles")
+    @Permission(code = "RBAC::USER::QUERY", name = "查询用户")
+    public List<RbacRole> getUserRoles(String userId) {
+        return rbacRoleRepo.findRoleByUserId(userId);
+    }
+
+
+
+
+    /**
+     * todo this place should be refactored, use addRoleToUser and removeRoleFromUser
      * 给用户授予角色
      * <p>
      * 该方法用于给指定用户授予一个或多个角色。
@@ -184,7 +186,7 @@ public class RbacUserController {
      * @param roleIds 角色 ID 数组
      */
     @RequestMapping("/rbac/user/grantRole")
-    @PermissionCell(code = "RBAC::USER::EDIT", name = "编辑用户")
+    @Permission(code = "RBAC::USER::GRANT", name = "授予用户角色")
     @Transactional
     public void grantRoleToUser(@UserId String userId, String[] roleIds) {
         if (roleIds == null) {
@@ -218,7 +220,7 @@ public class RbacUserController {
      * 删除用户,管理员角色用户不允许被删除
      */
     @RequestMapping("/rbac/user/delete")
-    @PermissionCell(code = "RBAC::USER::DELETE", name = "删除用户")
+    @Permission(code = "RBAC::USER::DELETE", name = "删除用户")
     public void deleteUser(String userId) {
         if (rbacRoleRepo.isAdminUser(userId)) {
             throw BusinessError.USER.USER_CAN_NOT_DELETE;
@@ -238,7 +240,7 @@ public class RbacUserController {
      * @param user 用户
      */
     @RequestMapping("/rbac/user/feature/get")
-    @PermissionCell(code = "RBAC::USER::QUERY", name = "查询用户")
+    @Permission(code = "RBAC::USER::QUERY", name = "查询用户")
     public String getFeature(@User RbacUser user) {
         rbacTokenService.buildFeatureTokenInfo(user);
         if (!StringUtils.hasText(user.getFeature())) {
@@ -254,7 +256,7 @@ public class RbacUserController {
      * @param user 用户
      */
     @RequestMapping("/rbac/user/feature/reset")
-    @PermissionCell(code = "RBAC::USER::EDIT", name = "编辑用户")
+    @Permission(code = "RBAC::USER::EDIT", name = "编辑用户")
     public String resetFeature(@User RbacUser user) {
         String feature = UUID.randomUUID().toString().replace("-", "");
         user.setFeature(feature);
