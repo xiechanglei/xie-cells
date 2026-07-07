@@ -5,15 +5,18 @@
     <tree path="/plugin" title="插件模块" icon="GeneralTrialBadge" textColor="193,177,228"/>
     <tree path="/starter" title="Spring boot starter 相关模块" icon="GeneralTrialBadge" textColor="193,177,228"/>
     <tree path="/test" title="测试" icon="GeneralTrialBadge" textColor="193,177,228"/>
+    <tree path="/web-template" title="前端模板" icon="GeneralTrialBadge" textColor="193,177,228"/>
 
     <!--    模块说明-->
-    <tree path="/common/xie-cell-common-bean" title="bean 模块" icon="ToolwindowsWarningEvents"/>
-    <tree path="/common/xie-cell-common-lang" title="基础语言模块" icon="ToolwindowsWarningEvents"/>
-    <tree path="/common/xie-cell-common-jpa-bean" title="Jpa 基础bean模块" icon="ToolwindowsWarningEvents"/>
-    <tree path="/plugin/xie-cell-plugin-ap" title="ap插件" icon="ToolwindowsErrorEvents"/>
+    <tree path="/common/xie-cell-common-bean" title="bean 模块" icon="ToolwindowsInfoEvents"/>
+    <tree path="/common/xie-cell-common-lang" title="基础语言模块" icon="ToolwindowsInfoEvents"/>
+    <tree path="/common/xie-cell-common-jpa-bean" title="Jpa 基础bean模块" icon="ToolwindowsInfoEvents"/>
     <tree path="/starter/xie-cell-starter-jpa" title="spring core starter" icon="ToolwindowsInfoEvents"/>
     <tree path="/starter/xie-cell-starter-spring" title="spring core starter" icon="ToolwindowsInfoEvents"/>
     <tree path="/starter/xie-cell-starter-web" title="web starter" icon="ToolwindowsInfoEvents"/>
     <tree path="/starter/xie-cell-starter-rbac-core" title="rbac 核心模块" icon="ToolwindowsInfoEvents"/>
     <tree path="/starter/xie-cell-starter-rbac-api" title="rbac 接口" icon="ToolwindowsInfoEvents"/>
+    <tree path="/test/test-web" title="web 测试" icon="ToolwindowsInfoEvents"/>
+
+    <tree path="/web-template/rbac-manager-react" title="rbac管理后台react版本" icon="ToolwindowsInfoEvents" textColor="243,156,18"/>
 </trees>
