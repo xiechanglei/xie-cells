@@ -6,3 +6,9 @@ export const resource_root = "/"
 
 // api的根路径,主要是映射到微服务网关时候的使用
 export const resource_api_root = "/api"
+
+// 设计图的宽度
+export const design_width = 1920
+
+// 设计图的高度
+export const design_height = 1080
