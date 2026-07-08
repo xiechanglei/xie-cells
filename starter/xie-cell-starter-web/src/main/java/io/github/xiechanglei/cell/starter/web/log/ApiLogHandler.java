@@ -8,19 +8,6 @@ import java.util.Map;
  * 该接口定义了 API 请求日志的处理规范，用于统一处理带有 {@link ApiLog} 注解的接口方法的日志记录。
  * 实现该接口的类需要定义具体的日志处理逻辑，如将日志信息输出到控制台、写入文件或存储到数据库。
  * </p>
- * <p>
- * 使用示例：
- * <pre>
- * {@code @Component}
- * public class CustomApiLogHandler implements ApiLogHandler {
- *     {@code @Override}
- *     public void handle(String name, String ip, String path, Map<String, Object> params) {
- *         // 自定义日志处理逻辑
- *         log.info("接口：{}, IP: {}, 路径：{}, 参数：{}", name, ip, path, params);
- *     }
- * }
- * </pre>
- * </p>
  *
  * @author xie
  * @date 2026/2/12

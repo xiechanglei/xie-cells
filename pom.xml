@@ -179,6 +179,13 @@
                         <additionalOptions>
                             <additionalOption>--enable-preview</additionalOption>
                         </additionalOptions>
+                        <tags>
+                            <tag>
+                                <name>date</name>
+                                <placement>a</placement>
+                                <head>Creation Date</head>
+                            </tag>
+                        </tags>
                         <additionalJOptions>
                             <additionalJOption>-Xdoclint:none</additionalJOption>
                         </additionalJOptions>

@@ -13,6 +13,10 @@
     <artifactId>test-web</artifactId>
     <name>test-web</name>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.github.xiechanglei</groupId>
