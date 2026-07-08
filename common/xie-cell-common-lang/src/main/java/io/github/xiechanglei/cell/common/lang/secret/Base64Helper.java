@@ -9,6 +9,7 @@ import java.util.Base64;
  * @author xie
  * @date 2024/9/3
  */
+@SuppressWarnings("unused")
 public class Base64Helper {
     /**
      * @param bytes 需要要编码的字节数组

@@ -37,7 +37,7 @@ public class RbacCurrentUserResolver implements HandlerMethodArgumentResolver {
     }
 
     @Override
-    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, @Nonnull NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, @Nonnull NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         CurrentUser currentUser = parameter.getParameterAnnotation(CurrentUser.class);
         if (currentUser != null) {
             RbacUser user = rbacUserAuthedService.loadCurrentUser();

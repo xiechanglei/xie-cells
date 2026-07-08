@@ -37,6 +37,7 @@ import lombok.Getter;
  *     }
  * </pre>
  */
+@SuppressWarnings("unused")
 @Getter
 public class BusinessException extends RuntimeException {
     private final int code;

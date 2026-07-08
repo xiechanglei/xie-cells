@@ -14,11 +14,9 @@ import java.util.Map;
 
 /**
  * 自定义日志处理器的注册
- *
  * 提供了两种日志扩展模式：
  * 1. 可以自己编写一个日志处理器，继承 LogAppender 类即可，然后自定义日志处理逻辑，比如输出到数据库或者网络流等其他地方
  * 2. 根据log4j的mark机制，可以将输出到文件的日志进行指定名称的切割，比如： log.info(FileMarker.of("test"), "tt");  这条日志会单独的输出到 test.log 文件中，全量的日志也会存留
- *
  * @author xie
  * @date 2025/4/2
  */
@@ -30,11 +28,12 @@ public class CellCustomLoggingRegister implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-        // register custom appender
         Logger rootLogger = (Logger) LoggerFactory.getLogger(ROOT_LOGGER_NAME);
+        @SuppressWarnings("rawtypes")
         Map<String, Appender> beansOfType = applicationContext.getBeansOfType(Appender.class);
         beansOfType.values().forEach(v -> {
             v.setContext(loggerContext);
+            //noinspection unchecked
             rootLogger.addAppender(v);
             v.start();
         });

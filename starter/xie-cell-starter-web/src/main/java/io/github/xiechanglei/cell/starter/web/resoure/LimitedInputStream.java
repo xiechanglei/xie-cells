@@ -15,6 +15,7 @@ import java.io.InputStream;
  * @author xie
  * @date 2026/2/20
  */
+@SuppressWarnings("ALL")
 public class LimitedInputStream extends InputStream {
     /**
      * 原始输入流
@@ -29,7 +30,7 @@ public class LimitedInputStream extends InputStream {
     /**
      * 起始跳过字节数
      */
-    private long start;
+    private final long start;
 
     /**
      * 已读取的字节索引

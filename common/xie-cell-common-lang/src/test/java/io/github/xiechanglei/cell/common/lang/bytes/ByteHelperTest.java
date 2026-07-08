@@ -52,19 +52,13 @@ class ByteHelperTest {
     @Test
     void testInvalidInput() {
         // 测试null输入
-        assertThrows(IllegalArgumentException.class, () -> {
-            ByteHelper.hexToByte(null);
-        });
+        assertThrows(IllegalArgumentException.class, () -> ByteHelper.hexToByte(null));
 
         // 测试长度小于2的字符串
-        assertThrows(IllegalArgumentException.class, () -> {
-            ByteHelper.hexToByte("F");
-        });
+        assertThrows(IllegalArgumentException.class, () -> ByteHelper.hexToByte("F"));
 
         // 测试长度大于2的字符串
-        assertThrows(IllegalArgumentException.class, () -> {
-            ByteHelper.hexToByte("FFF");
-        });
+        assertThrows(IllegalArgumentException.class, () -> ByteHelper.hexToByte("FFF"));
 
         // 测试无效的十六进制字符
         assertThrows(NumberFormatException.class, () -> {

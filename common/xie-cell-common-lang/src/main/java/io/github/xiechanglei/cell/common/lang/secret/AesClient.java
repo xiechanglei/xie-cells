@@ -12,6 +12,7 @@ import java.util.Base64;
  * 2.base64问题
  * 3.key和iv格式化问题
  */
+@SuppressWarnings("unused")
 public class AesClient {
     /**
      * 默认的字符编码，在加密时候，用于将字符串转换为字节数组，解密时候，用于将字节数组转换为字符串

@@ -3,6 +3,7 @@ package io.github.xiechanglei.cell.common.lang.secret;
 /**
  * Aes加密工具类
  */
+@SuppressWarnings("unused")
 public class AESHelper {
 
     /**

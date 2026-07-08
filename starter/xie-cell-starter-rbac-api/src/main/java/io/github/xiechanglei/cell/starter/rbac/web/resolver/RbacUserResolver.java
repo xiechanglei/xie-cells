@@ -15,7 +15,6 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
 /**
@@ -45,7 +44,7 @@ public class RbacUserResolver implements HandlerMethodArgumentResolver {
      * 解析 {@link User} 注解参数，获取用户信息。
      */
     @Override
-    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, @NonNull NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, @NonNull NativeWebRequest webRequest, WebDataBinderFactory binderFactory)  {
         if (parameter.hasParameterAnnotation(UserId.class)) {
             String id = webRequest.getParameter(Objects.requireNonNull(parameter.getParameterName()));
             if (!StringUtils.hasText(id)) {

@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 @Component
+@SuppressWarnings("unused")
 @ConfigurationProperties(prefix = "cell.web.log")
 public class CellApiLogConfigProperties {
     /**

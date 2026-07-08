@@ -61,6 +61,7 @@ public class CellWebJsonSerializeConfig implements ApplicationContextAware {
             if (se instanceof JsonSerializer) {
                 log.info("注册自定义 JSON 序列化器: {}，目标类型: {}", se.getClass().getName(), annotation.targetType());
                 for (Class<?> aClass : annotation.targetType()) {
+                    //noinspection unchecked,rawtypes
                     module.addSerializer(aClass, (JsonSerializer) se);
                 }
             } else {

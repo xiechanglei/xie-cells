@@ -14,6 +14,7 @@ import java.util.*;
  */
 @Getter
 @RequiredArgsConstructor
+@SuppressWarnings("unused")
 public class NamedMarker implements Marker {
     private final String name;
     private final List<Marker> references = new ArrayList<>();

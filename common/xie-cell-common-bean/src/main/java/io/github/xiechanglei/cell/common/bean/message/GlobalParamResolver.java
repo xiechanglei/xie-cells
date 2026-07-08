@@ -6,6 +6,7 @@ package io.github.xiechanglei.cell.common.bean.message;
  * @author xie
  * @date 2026/4/2
  */
+@SuppressWarnings("unused")
 public interface GlobalParamResolver {
     ScopedValue<GlobalParamResolver> GlobalParam = ScopedValue.newInstance();
 

@@ -146,6 +146,9 @@ public class RbacUserController {
     @RequestMapping("/rbac/user/disable")
     @Permission(code = "RBAC::USER::EDIT", name = "编辑用户")
     public void disable(String userId) {
+        if (rbacRoleRepo.isAdminUser(userId)) {
+            throw BusinessError.USER.USER_CAN_NOT_OPERATE;
+        }
         rbacUserRepo.changeUserStatus(userId, EnableStatus.DISABLED);
     }
 

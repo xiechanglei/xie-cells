@@ -88,6 +88,7 @@ public class StringOptional {
      * orThrow
      *
      */
+    @SuppressWarnings("UnusedReturnValue")
     public <X extends Throwable> StringOptional orElseThrow(X e) throws X {
         if (StringHelper.isNotBlank(value)) {
             return this;

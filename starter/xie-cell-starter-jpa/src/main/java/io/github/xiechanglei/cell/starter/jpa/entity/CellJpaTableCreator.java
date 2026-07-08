@@ -14,6 +14,7 @@ import javax.sql.DataSource;
  * @author xie
  * @date 2024/12/19
  */
+@SuppressWarnings("unused")
 @RequiredArgsConstructor
 public class CellJpaTableCreator {
     /**

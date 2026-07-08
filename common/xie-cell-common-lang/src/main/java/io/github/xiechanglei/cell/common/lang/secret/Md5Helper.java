@@ -41,6 +41,7 @@ public class Md5Helper {
      * @param filePath 文件路径
      * @return md5值
      */
+    @SuppressWarnings("unused")
     public static String getMd5FromFile(String filePath) throws IOException, NoSuchAlgorithmException {
         return getMd5FromFile(new File(filePath));
     }

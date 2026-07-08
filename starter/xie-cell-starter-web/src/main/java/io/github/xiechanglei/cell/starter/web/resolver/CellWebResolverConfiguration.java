@@ -1,5 +1,6 @@
 package io.github.xiechanglei.cell.starter.web.resolver;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.ApplicationContext;
@@ -31,7 +32,7 @@ public class CellWebResolverConfiguration implements WebMvcConfigurer {
      *                  在此方法中，能够将自定义的解析器添加到此列表中，使其能在请求处理过程中使用。
      */
     @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+    public void addArgumentResolvers(@NonNull List<HandlerMethodArgumentResolver> resolvers) {
         applicationContext.getBeansWithAnnotation(WebResolver.class).values().forEach(resolver -> {
             if (resolver instanceof HandlerMethodArgumentResolver) {
                 resolvers.add((HandlerMethodArgumentResolver) resolver);
@@ -43,7 +44,7 @@ public class CellWebResolverConfiguration implements WebMvcConfigurer {
     }
 
     @Override
-    public void addFormatters(FormatterRegistry registry) {
+    public void addFormatters(@NonNull FormatterRegistry registry) {
         applicationContext.getBeansWithAnnotation(WebConverter.class).values().forEach(resolver -> {
             if (resolver instanceof org.springframework.core.convert.converter.Converter) {
                 registry.addConverter((org.springframework.core.convert.converter.Converter<?, ?>) resolver);

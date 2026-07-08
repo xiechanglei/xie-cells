@@ -32,7 +32,6 @@ public class AESDigest {
 
     /**
      * aes编码过程，使用 AES/CBC/PKCS5Padding 算法，
-     * 密码与偏移量可以使用 {@link AESHelper#formatPass(byte[]) 密钥格式化} 与 {@link AESHelper#formatIv(byte[]) iv格式化} 进行处理
      *
      * @param byteContent 待aes编码字节数组
      * @param password    密码字节数组，长度必须是16字节，24字节，或者是32字节

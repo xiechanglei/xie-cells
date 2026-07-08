@@ -86,10 +86,7 @@ public class CellWebGlobalResponseBodyAdvice implements ResponseBodyAdvice<Objec
         }
 
         // 方法上有DisableResponseAdvice的不进行封装
-        if (Objects.requireNonNull(returnType.getMethod()).getAnnotation(DisableResponseAdvice.class) != null) {
-            return false;
-        }
-        return true;
+        return Objects.requireNonNull(returnType.getMethod()).getAnnotation(DisableResponseAdvice.class) == null;
     }
 
     /**

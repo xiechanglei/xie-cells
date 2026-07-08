@@ -6,12 +6,13 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
+import static io.github.xiechanglei.cell.common.lang.date.DateHelper.DEFAULT_ZONE_ID;
+
 /**
  * 时间格式化与解析的接口
  */
+@SuppressWarnings("unused")
 public class DateParseInterface {
-    protected static final String DEFAULT_ZONE = "Asia/Shanghai";
-    protected static final ZoneId DEFAULT_ZONE_ID = ZoneId.of(DEFAULT_ZONE);
     // simple Date format
     protected static final DateConverter DEFAULT_DATETIME_PARSER = DateConverter.of("yyyy-MM-dd HH:mm:ss", DEFAULT_ZONE_ID);
     protected static final DateConverter DEFAULT_DATE_PARSER = DateConverter.of("yyyy-MM-dd", DEFAULT_ZONE_ID);

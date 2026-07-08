@@ -80,7 +80,7 @@ public class CellWebDateResolver implements HandlerMethodArgumentResolver, Conve
     }
 
     @Override
-    public Date convert(String dateStr) {
+    public Date convert(@lombok.NonNull String dateStr) {
         if (!StringUtils.hasText(dateStr)) {
             return null;
         }

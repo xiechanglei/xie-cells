@@ -49,9 +49,8 @@ public class FindByIdJpaForkTask implements JpaForkTask {
         } else if (needFilter) {
             // 使用 Criteria API + Tuple 进行字段过滤查询（带 ID 条件）
             String[] finalFields = resolveFinalFields(entityInfo.entityClass(), onlyFields, ignoreFields);
-            TypedQuery<Tuple> tupleCriteriaQuery = queryWithFieldFilter(em, entityInfo.entityClass(), finalFields, (cq, root) -> {
-                cq.where(em.getCriteriaBuilder().equal(root.get(entityInfo.idPropertyName()), id));
-            });
+            TypedQuery<Tuple> tupleCriteriaQuery = queryWithFieldFilter(em, entityInfo.entityClass(), finalFields, (cq, root)
+                    -> cq.where(em.getCriteriaBuilder().equal(root.get(entityInfo.idPropertyName()), id)));
             // add id condition
             result = tupleToEntity(tupleCriteriaQuery.getSingleResult(), finalFields, entityInfo.entityClass());
         } else {

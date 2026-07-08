@@ -34,6 +34,7 @@ import java.time.format.DateTimeFormatter;
  * @author xie
  * @date 2026/2/12
  */
+@SuppressWarnings("unused")
 public class CellResourceResponseHandler {
 
     /**

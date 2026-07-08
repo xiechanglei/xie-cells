@@ -55,8 +55,7 @@ public class WebDateSerializer extends StdSerializer<Object> {
      */
     @Override
     public void serialize(Object value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-        if (value instanceof Date) {
-            Date date = (Date) value;
+        if (value instanceof Date date) {
             gen.writeString(Long.toString(date.getTime()));
         } else {
             throw new IllegalArgumentException("Unsupported type for WebDateSerializer: " + value.getClass().getName());

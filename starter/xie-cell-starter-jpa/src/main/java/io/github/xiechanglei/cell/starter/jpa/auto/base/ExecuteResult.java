@@ -27,6 +27,7 @@ package io.github.xiechanglei.cell.starter.jpa.auto.base;
  * @author xie
  * @date 2026/3/4
  */
+@SuppressWarnings("unused")
 public record ExecuteResult<T>(Boolean success, T get) {
 
     public <E extends Exception> ExecuteResult<T> throwIfFailed(E e) throws E {

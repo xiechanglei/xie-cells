@@ -100,8 +100,8 @@ public class CustomParameterResolver implements HandlerMethodArgumentResolver {
     }
 
     @Override
-    public Object resolveArgument(...) {
-        // 自定义解析逻辑
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, @Nonnull NativeWebRequest webRequest, WebDataBinderFactory binderFactory){
+    // 自定义解析逻辑
     }
 }
 ```

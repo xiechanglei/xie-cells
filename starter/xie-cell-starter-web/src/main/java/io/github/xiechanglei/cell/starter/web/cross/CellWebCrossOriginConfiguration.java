@@ -37,7 +37,7 @@ public class CellWebCrossOriginConfiguration implements WebMvcConfigurer {
      * 该方法用于配置跨域访问的参数
      * 1. addMapping: 配置可以被跨域的路径,可以任意配置,可以具体到直接请求路径
      * 2. allowedMethods: 允许的请求方式,如GET,POST,PUT,DELETE等
-     * 3. allowedOrigins: 允许的访问源,如http://www.baidu.com,如果是*则表示所有源
+     * 3. allowedOrigins: 允许的访问源,如<a href="http://www.baidu.com">...</a>,如果是*则表示所有源
      * 4. allowedHeaders: 允许的请求头,如X-Requested-With,Content-Type,Authorization等
      * 5. allowCredentials: 是否允许发送Cookie,默认为false
      * 6. maxAge: 预检请求的有效期,单位为秒,有效期内不需要预检请求

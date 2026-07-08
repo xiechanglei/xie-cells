@@ -65,9 +65,7 @@ class ByteArrayHelperTest {
         });
 
         // 测试单个字符
-        assertThrows(IllegalArgumentException.class, () -> {
-            ByteArrayHelper.hexToByteArray("F");
-        });
+        assertThrows(IllegalArgumentException.class, () -> ByteArrayHelper.hexToByteArray("F"));
     }
 
     @Test

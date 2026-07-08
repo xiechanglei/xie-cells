@@ -15,6 +15,7 @@ import java.util.function.Consumer;
  * @author xie
  * @date 2025/3/24
  */
+@SuppressWarnings("unused")
 public interface JpaQueryProducer {
 
 

@@ -23,6 +23,7 @@ public @interface WebSerializer {
      *
      * @return Bean 名称
      */
+    @SuppressWarnings("UnusedReturnValue")
     @AliasFor(annotation = Component.class)
     String value() default "";
 

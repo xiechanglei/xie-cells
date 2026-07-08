@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 @Setter
 @Component
 @ConfigurationProperties(prefix = "cell.web.advice")
+@SuppressWarnings("unused")
 public class CellWebAdviceConfigProperties {
     /**
      * 是否开启全局异常处理

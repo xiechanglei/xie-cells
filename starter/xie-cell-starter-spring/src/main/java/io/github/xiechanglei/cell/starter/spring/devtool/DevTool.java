@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 /**
  * 判断当前的运行环境
  */
+@SuppressWarnings("unused")
 @Component
 public class DevTool {
 

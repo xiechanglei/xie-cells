@@ -28,6 +28,7 @@ public class DeleteByIdJpaForkTask implements JpaForkTask {
         // 确定实体类
         EntityInfo entityInfo = ForkMethodHandler.resolveEntityClass(method, deleteById.value());
         // 删除对象
+        //noinspection SqlSourceToSinkFlow
         em.createQuery("delete from " + entityInfo.entityClass().getName() + " e where e." + entityInfo.idPropertyName() + " = :id")
                 .setParameter("id", id)
                 .executeUpdate();
