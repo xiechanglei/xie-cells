@@ -1,6 +1,6 @@
 # Xie-Cells - Java 工具框架
 
-![Version](https://img.shields.io/badge/version-3.5.16.1-blue.svg)
+![Version](https://img.shields.io/badge/version-3.5.16.2-blue.svg)
 ![License](https://img.shields.io/badge/license-Apache--2.0-green.svg)
 ![Java Version](https://img.shields.io/badge/java-21-red.svg)
 ![Spring Boot](https://img.shields.io/badge/spring--boot-3.5.16-brightgreen.svg)
@@ -38,7 +38,7 @@ Xie-Cells 是一个集成常用工具和自定义 Spring Boot Starter 的 Java �
 <parent>
     <groupId>io.github.xiechanglei</groupId>
     <artifactId>xie-cells-parent</artifactId>
-    <version>3.5.16.1</version>
+    <version>3.5.16.2</version>
     <relativePath/>
 </parent>
 ```
@@ -60,7 +60,7 @@ Xie-Cells 是一个集成常用工具和自定义 Spring Boot Starter 的 Java �
 <dependency>
     <groupId>io.github.xiechanglei</groupId>
     <artifactId>xie-cells-common-lang</artifactId>
-    <version>3.5.16.1</version>
+    <version>3.5.16.2</version>
 </dependency>
 ```
 
