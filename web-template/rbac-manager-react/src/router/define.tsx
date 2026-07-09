@@ -7,7 +7,7 @@ export const routes: RouteObject[] = [
 ]
 
 /**
- * 为路由添加加载器
+ * 为路由添加一个loader加载器，使每次路由跳转的时候都执行loader函数，可以用于权限校验等场景
  * @param loader
  */
 export const withLoader = (loader: LoaderFunction) => {

@@ -1,5 +1,5 @@
 import {CreateAxiosDefaults} from "axios";
-import {resource_api_root} from "@/config/config";
+import {resource_api_root} from "@/config";
 
 /** axios的默认配置 */
 export const axiosConfig: CreateAxiosDefaults = {

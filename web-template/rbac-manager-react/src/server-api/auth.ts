@@ -1,6 +1,6 @@
 import {POST} from "@/request";
+import {token_name} from "@/config";
 
-const token_name = "xie-tools-simple-auth-token"
 /**
  * 登陆接口
  * @param username 用户名

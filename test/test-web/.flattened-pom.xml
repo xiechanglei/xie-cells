@@ -5,11 +5,11 @@
   <parent>
     <groupId>io.github.xiechanglei</groupId>
     <artifactId>test-cells</artifactId>
-    <version>3.5.10.1</version>
+    <version>3.5.16.1</version>
   </parent>
   <groupId>io.github.xiechanglei</groupId>
   <artifactId>test-web</artifactId>
-  <version>3.5.10.1</version>
+  <version>3.5.16.1</version>
   <name>test-web</name>
   <licenses>
     <license>
@@ -18,14 +18,13 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+  <properties>
+    <maven.deploy.skip>true</maven.deploy.skip>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>io.github.xiechanglei</groupId>
-      <artifactId>xie-cell-starter-web</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.github.xiechanglei</groupId>
-      <artifactId>xie-cell-starter-jpa</artifactId>
+      <artifactId>xie-cell-starter-rbac-api</artifactId>
     </dependency>
     <dependency>
       <groupId>com.mysql</groupId>
