@@ -155,6 +155,39 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <!--        常规开发下，一般都有dev,test,prod,linux-dev-->
+        <!--        自动注入 spring.profiles.active-->
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <profile.active>dev</profile.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <env>test</env>
+                <profile.active>test</profile.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <profile.active>prod</profile.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux-dev</id>
+            <properties>
+                <profile.active>linux-dev</profile.active>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <pluginManagement>
             <plugins>
