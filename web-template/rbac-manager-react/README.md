@@ -125,3 +125,8 @@ const Demo = () => {
   )
 }
 ```
+
+
+https://minimals.cc/dashboard
+https://aurora.themewagon.com/apps/kanban/create-board
+https://material-kit-pro-react.devias.io/dashboard/customers/1
