@@ -73,6 +73,16 @@
             <groupId>io.github.xiechanglei</groupId>
             <artifactId>xie-cell-common-lang</artifactId>
         </dependency>
+        <!--缩略图处理-->
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+        </dependency>
 
     </dependencies>
 

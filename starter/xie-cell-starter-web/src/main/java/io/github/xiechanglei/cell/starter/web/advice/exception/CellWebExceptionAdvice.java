@@ -6,6 +6,7 @@ import io.github.xiechanglei.cell.common.bean.exception.ResourceNotFoundExceptio
 import io.github.xiechanglei.cell.common.bean.exception.UnauthorizedException;
 import io.github.xiechanglei.cell.common.bean.message.WebResult;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -92,12 +93,11 @@ public class CellWebExceptionAdvice {
      * 实际开发中，应尽量减少这种异常的出现，以确保系统的稳定性和可维护性。
      *
      * @param e 捕获的所有其他异常
-     * @return 封装了异常信息的 {@link WebResult} 对象
      */
     @ExceptionHandler(value = Throwable.class)
-    public WebResult<?> handleException(Exception e) {
+    public void handleException(Exception e, HttpServletResponse response) {
         log.error("系统异常", e);
-        return WebResult.failed(e.getMessage());
+        response.setStatus(500);
     }
 
 

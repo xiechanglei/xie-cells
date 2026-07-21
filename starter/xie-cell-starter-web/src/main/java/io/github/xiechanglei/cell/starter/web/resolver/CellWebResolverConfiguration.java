@@ -22,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CellWebResolverConfiguration implements WebMvcConfigurer {
     private final ApplicationContext applicationContext;
+
     /**
      * 注册自定义的请求参数解析器。
      * <p>
