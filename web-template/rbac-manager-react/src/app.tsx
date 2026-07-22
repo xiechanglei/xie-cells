@@ -1,11 +1,26 @@
-import {createRoot} from 'react-dom/client'
-import {router, RouterProvider} from "./router";
-import {Provider} from "@/components/theme/provider"
+import {useEffect} from 'react';
+import {usePathname} from '@/router/hooks';
+import {ThemeProvider} from '@/theme/theme-provider';
+import {ReactNode} from "react";
 
-/**
- * this is the entry point of the application, it will render the root component into the DOM
- */
+function useScrollToTop() {
+    const pathname = usePathname();
 
-createRoot(document.getElementById('root')!).render(<Provider>
-    <RouterProvider router={router}/>
-</Provider>)
+    useEffect(() => {
+        window.scrollTo(0, 0)
+    }, [pathname]);
+
+    return null;
+}
+
+
+export const App = ({children}: { children: ReactNode }) => {
+    useScrollToTop()
+    return (
+        <ThemeProvider>
+            {children}
+        </ThemeProvider>
+    );
+}
+
+

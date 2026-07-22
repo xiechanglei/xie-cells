@@ -1,6 +1,6 @@
 import {AxiosError, AxiosRequestConfig, AxiosResponse, CanceledError} from "axios";
-import {openNotify} from "@/component/feedback/notify";
-import {navigate} from "@/router";
+import {openNotify} from "@/components/feedback/notify";
+import {redirect} from "react-router-dom";
 
 type ResponseType = {
     success: boolean,
@@ -43,7 +43,7 @@ export const errorInterceptor = (error: AxiosError): Promise<AxiosError> => {
         })
         if (error.status === 401) {
             // 跳转到登陆
-            navigate("/login")
+            redirect("/sign-in")
         }
     }
     return Promise.reject(error)

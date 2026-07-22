@@ -7,7 +7,7 @@ import {token_name} from "@/config";
  * @param password 密码
  */
 const login = (username: string, password: string) => {
-    return POST<string>("/simple-auth/login", {username, password})
+    return POST<string>("/rbac/auth/login", {username, password})
 }
 
 /**
@@ -37,4 +37,5 @@ const setToken = (token: string) => {
     // document.cookie = `${token_name}=${token}; path=/; max-age=31536000; SameSite=Lax`;
     localStorage.setItem(token_name, token);
 }
+
 export const authApi = {login, hasToken, getTokenInfo, setToken}
