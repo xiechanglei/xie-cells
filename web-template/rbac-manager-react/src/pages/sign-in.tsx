@@ -1,15 +1,15 @@
-import {SignInView} from '@/sections/auth';
+import {useLanguage} from '@/store/language';
+import {useDocumentTitle} from "@/hooks/dom/document.title";
 
 // ----------------------------------------------------------------------
 
-import {useLanguage} from '@/store/language';
 
 export default function Page() {
     const {language} = useLanguage()
+    useDocumentTitle(language.login);
     return (
         <>
-            <title>{language.login}</title>
-            <SignInView/>
+            hello world
         </>
     );
 }

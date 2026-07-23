@@ -5,6 +5,9 @@ import {EffectCallback, useEffect} from "react";
  * @param callback 挂载时执行的回调
  */
 export const useMount = (callback: EffectCallback) => useEffect(callback, []);
+export const usePureMount = (callback: () => void) => useEffect(() => {
+    callback();
+}, []);
 
 
 /**
