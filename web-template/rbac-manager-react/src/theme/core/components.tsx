@@ -22,6 +22,7 @@ const MuiButton: Components<Theme>['MuiButton'] = {
     disableElevation: true,
   },
   styleOverrides: {
+    // @ts-ignore
     containedInherit: ({ theme }) => ({
       color: theme.vars.palette.common.white,
       backgroundColor: theme.vars.palette.grey[800],
@@ -42,13 +43,14 @@ const MuiCard: Components<Theme>['MuiCard'] = {
       zIndex: 0,
       position: 'relative',
       boxShadow: theme.vars.customShadows.card,
-      borderRadius: theme.shape.borderRadius * 2,
+      borderRadius: theme.shape.borderRadius as number * 2,
     }),
   },
 };
 
 const MuiCardHeader: Components<Theme>['MuiCardHeader'] = {
   defaultProps: {
+    // @ts-ignore
     titleTypographyProps: { variant: 'h6' },
     subheaderTypographyProps: { variant: 'body2' },
   },

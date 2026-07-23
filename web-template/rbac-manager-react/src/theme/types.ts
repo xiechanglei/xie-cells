@@ -6,7 +6,7 @@ import type {
   ThemeOptions as MuiThemeOptions,
 } from '@mui/material/styles';
 
-import type { CustomShadows } from './core/custom-shadows';
+import type { CustomShadows } from '@/theme/core';
 
 // ----------------------------------------------------------------------
 

@@ -2,9 +2,9 @@ import type { PaletteColor, ColorSystemOptions, PaletteColorChannel } from '@mui
 
 import { varAlpha, createPaletteChannel } from 'minimal-shared/utils';
 
-import { themeConfig } from '../theme-config';
+import { themeConfig } from '@/theme';
 
-import type { ThemeColorScheme } from '../types';
+import type { ThemeColorScheme } from '@/theme';
 
 // ----------------------------------------------------------------------
 

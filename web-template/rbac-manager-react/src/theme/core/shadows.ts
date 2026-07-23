@@ -2,9 +2,9 @@ import type { Shadows } from '@mui/material/styles';
 
 import { varAlpha } from 'minimal-shared/utils';
 
-import { grey } from './palette';
+import { grey } from '@/theme';
 
-import type { ThemeColorScheme } from '../types';
+import type { ThemeColorScheme } from '@/theme';
 
 // ----------------------------------------------------------------------
 

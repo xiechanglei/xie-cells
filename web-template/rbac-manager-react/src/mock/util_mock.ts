@@ -1,5 +1,3 @@
-export const now = new Date().getTime().toString();
-
 export const buildSuccessResponse = (data: unknown) => {
     return {
         code: 0,

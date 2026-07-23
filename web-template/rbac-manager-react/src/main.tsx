@@ -1,22 +1,18 @@
 import {createRoot} from 'react-dom/client';
-import {Outlet, RouterProvider, createBrowserRouter} from 'react-router';
+import {Outlet, RouterProvider, createHashRouter} from 'react-router';
 
 import {App} from './app';
 import {routesSection} from "@/router/sections";
-import {ErrorBoundary} from "@/router/components";
 
-// ----------------------------------------------------------------------
-
-const router = createBrowserRouter([
-  {
-    Component: () => (
-        <App>
-          <Outlet/>
-        </App>
-    ),
-    errorElement: <ErrorBoundary/>,
-    children: routesSection,
-  },
+const router = createHashRouter([
+    {
+        Component: () => (
+            <App>
+                <Outlet/>
+            </App>
+        ),
+        children: routesSection,
+    },
 ]);
 
 const root = createRoot(document.getElementById('root')!);

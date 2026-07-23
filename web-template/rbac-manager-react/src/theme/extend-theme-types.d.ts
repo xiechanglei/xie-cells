@@ -1,15 +1,15 @@
 import type {} from '@mui/lab/themeAugmentation';
 import type {} from '@mui/material/themeCssVarsAugmentation';
 
-import type { FontStyleExtend } from './core/typography';
-import type { CustomShadows } from './core/custom-shadows';
+import type { FontStyleExtend } from '@/theme/core';
+import type { CustomShadows } from '@/theme/core';
 import type {
   GreyExtend,
   TypeTextExtend,
   CommonColorsExtend,
   PaletteColorExtend,
   TypeBackgroundExtend,
-} from './core/palette';
+} from '@/theme/core/palette';
 
 // ----------------------------------------------------------------------
 

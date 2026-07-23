@@ -1,6 +1,14 @@
 import {FC, FragmentProps} from "react";
 
-export const AuthLayout:FC<FragmentProps> = ({children}) => {
+/**
+ * 主页面布局
+ * @constructor
+ */
+
+
+
+
+export const MainLayout: FC<FragmentProps> = ({children}) => {
     return (
         <div>
             {children}

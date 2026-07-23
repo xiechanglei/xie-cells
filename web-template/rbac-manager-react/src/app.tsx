@@ -1,26 +1,19 @@
-import {useEffect} from 'react';
-import {usePathname} from '@/router/hooks';
-import {ThemeProvider} from '@/theme/theme-provider';
 import {ReactNode} from "react";
-
-function useScrollToTop() {
-    const pathname = usePathname();
-
-    useEffect(() => {
-        window.scrollTo(0, 0)
-    }, [pathname]);
-
-    return null;
-}
-
+import {Provider} from 'react-redux'
+import store from '@/store'
+import {useScrollToTop} from "@/hooks/dom/scroll";
+import {ThemeProvider} from "@/theme";
 
 export const App = ({children}: { children: ReactNode }) => {
     useScrollToTop()
     return (
-        <ThemeProvider>
-            {children}
-        </ThemeProvider>
+        <Provider store={store}>
+            <ThemeProvider>
+                {children}
+            </ThemeProvider>
+        </Provider>
     );
 }
+
 
 

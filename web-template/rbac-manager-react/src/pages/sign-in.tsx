@@ -1,13 +1,15 @@
-import { SignInView } from '@/sections/auth';
+import {SignInView} from '@/sections/auth';
 
 // ----------------------------------------------------------------------
 
-export default function Page() {
-  return (
-    <>
-      <title>{`Sign in `}</title>
+import {useLanguage} from '@/store/language';
 
-      <SignInView />
-    </>
-  );
+export default function Page() {
+    const {language} = useLanguage()
+    return (
+        <>
+            <title>{language.login}</title>
+            <SignInView/>
+        </>
+    );
 }
