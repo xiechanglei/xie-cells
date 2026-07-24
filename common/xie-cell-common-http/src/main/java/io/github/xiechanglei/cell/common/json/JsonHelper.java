@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 
 /**
  * JSON 工具类，提供 JSON 序列化和反序列化功能
@@ -30,6 +31,7 @@ public class JsonHelper {
 
     /**
      * 将对象转换为 JSON 字符串
+     *
      * @param obj 待转换的对象
      * @return JSON 字符串
      */
@@ -70,5 +72,26 @@ public class JsonHelper {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    /**
+     * 使用 JSONPath 解析 JSON 字符串.简单的调用，如果想更复杂的操作，请使用 JsonPath 类
+     *
+     * @param jsonContent JSON 字符串
+     * @param jsonPath    JSONPath 表达式
+     */
+    public static Object read(String jsonContent, String jsonPath) {
+        return JsonPath.read(jsonContent, jsonPath);
+    }
+
+    /**
+     * json 格式化输出
+     *
+     * @param jsonContent JSON 字符串
+     * @return 格式化后的 JSON 字符串
+     */
+    public static String format(String jsonContent) throws JsonProcessingException {
+        return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(objectMapper.readTree(jsonContent));
     }
 }

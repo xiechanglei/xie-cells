@@ -7,6 +7,8 @@ import lombok.experimental.Accessors;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetSocketAddress;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -45,6 +47,15 @@ public class HttpRequestHandler {
 
     @Setter
     private boolean followRedirects = false;
+
+    // proxy
+    private InetSocketAddress proxyAddress;
+
+    public HttpRequestHandler proxy(String host, int port) {
+        this.proxyAddress = new InetSocketAddress(host, port);
+        return this;
+    }
+
 
     // 请求header
     private final Map<String, String> headers = new HashMap<>();
@@ -164,6 +175,11 @@ public class HttpRequestHandler {
     private HttpClient.Builder getClientBuilder() {
         HttpClient.Builder clientBuilder = HttpClient.newBuilder();
 
+        // 使用代理  127.0.0.1:1080
+        if (proxyAddress != null) {
+            clientBuilder.proxy(ProxySelector.of(proxyAddress));
+        }
+        //
         clientBuilder.connectTimeout(Duration.ofMillis(connectTimeout));
         if (followRedirects) {
             clientBuilder.followRedirects(HttpClient.Redirect.ALWAYS);
@@ -180,7 +196,6 @@ public class HttpRequestHandler {
      */
     private HttpRequest getRequest() {
         HttpRequest.Builder builder = HttpRequest.newBuilder();
-
         // set url
         builder.uri(URI.create(url));
         // set headers
