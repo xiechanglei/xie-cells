@@ -18,6 +18,7 @@
     <modules>
         <module>xie-cell-common-bean</module>
         <module>xie-cell-common-lang</module>
+        <module>xie-cell-common-http</module>
         <module>xie-cell-common-jpa-bean</module>
     </modules>
 

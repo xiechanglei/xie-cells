@@ -64,11 +64,11 @@ public class FileUploadService {
             return md5;
         } catch (IOException | NoSuchAlgorithmException e) {
             if (storeFileHandler != null) {
-                storeFileHandler.deleteFile();
+                storeFileHandler.delete();
             }
             throw new RuntimeException(e);
         } finally {
-            tempFileHandler.deleteFile();
+            tempFileHandler.delete();
         }
     }
 
@@ -221,7 +221,7 @@ public class FileUploadService {
         // delete the oldest files
         try {
             for (int i = 0; i < fileHandlers.size() - maxThumbnailCount; i++) {
-                fileHandlers.get(i).deleteFile();
+                fileHandlers.get(i).delete();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

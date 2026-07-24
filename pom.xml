@@ -58,6 +58,8 @@
         <data-base-proxy.version>1.12.1</data-base-proxy.version>
         <thumbnailator.version>0.4.21</thumbnailator.version>
         <tika.version>3.3.1</tika.version>
+        <json-path.version>3.0.0</json-path.version>
+
 
         <!--   修复ce漏洞的版本管理-->
     </properties>
@@ -82,7 +84,11 @@
                 <artifactId>xie-cell-common-lang</artifactId>
                 <version>${revision}</version>
             </dependency>
-
+            <dependency>
+                <groupId>io.github.xiechanglei</groupId>
+                <artifactId>xie-cell-common-http</artifactId>
+                <version>${revision}</version>
+            </dependency>
             <dependency>
                 <groupId>io.github.xiechanglei</groupId>
                 <artifactId>xie-cell-common-jpa-bean</artifactId>
@@ -151,7 +157,16 @@
                 <artifactId>tika-core</artifactId>
                 <version>${tika.version}</version>
             </dependency>
+
+            <!--            json 的处理工具-->
+            <dependency>
+                <groupId>com.jayway.jsonpath</groupId>
+                <artifactId>json-path</artifactId>
+                <version>${json-path.version}</version>
+            </dependency>
+
         </dependencies>
+
     </dependencyManagement>
 
     <!--    基础依赖，此处定义的依赖将在所有子模块中自动引入，不需要额外定义-->
