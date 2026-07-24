@@ -16,6 +16,7 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * http 请求类
@@ -48,17 +49,20 @@ public class HttpRequestHandler {
     @Setter
     private boolean followRedirects = false;
 
+    // cookies
+    private final Map<String, String> cookies = new HashMap<>();
+
     // proxy
     private InetSocketAddress proxyAddress;
+
+    // 请求header
+    private final Map<String, String> headers = new HashMap<>();
 
     public HttpRequestHandler proxy(String host, int port) {
         this.proxyAddress = new InetSocketAddress(host, port);
         return this;
     }
 
-
-    // 请求header
-    private final Map<String, String> headers = new HashMap<>();
 
     /**
      * 添加header
@@ -82,7 +86,22 @@ public class HttpRequestHandler {
      * 设置cookie
      */
     public HttpRequestHandler cookie(String name, String value) {
-        headers.put("Cookie", name + "=" + value);
+        cookies.put(name, value);
+        return this;
+    }
+
+    public HttpRequestHandler cookies(Map<String, String> cookies) {
+        if (cookies != null) {
+            this.cookies.putAll(cookies);
+        }
+        return this;
+    }
+
+    /**
+     * 设置user agent
+     */
+    public HttpRequestHandler userAgent(String userAgent) {
+        headers.put("User-Agent", userAgent);
         return this;
     }
 
@@ -155,6 +174,48 @@ public class HttpRequestHandler {
         }
     }
 
+    public static final int DEFAULT_SSE_BUFFER_SIZE = 8192;
+
+    /**
+     * 处理sse流式响应格式的数据
+     */
+    public HttpStringResponse sse(Consumer<String> consumer) throws IOException, InterruptedException, HttpStatusException {
+        return sse(DEFAULT_SSE_BUFFER_SIZE, consumer);
+    }
+
+    /**
+     * 处理sse流式响应格式的数据
+     */
+    public HttpStringResponse sse(int bufferSize, Consumer<String> consumer) throws IOException, InterruptedException, HttpStatusException {
+        try (HttpClient client = getClientBuilder().build()) {
+            HttpResponse<InputStream> response = client.send(getRequest(), HttpResponse.BodyHandlers.ofInputStream());
+            try (InputStream inputStream = response.body()) {
+                String charset = guessResponseCharset(response);
+                if (response.statusCode() < 200 || response.statusCode() > 299) {
+                    String body = new String(inputStream.readAllBytes(), charset);
+                    throw new HttpStatusException("Http error status code: " + response.statusCode(), new FakeHttpStringResponse(response, body));
+                } else {
+                    StringBuilder sb = new StringBuilder();
+                    byte[] buffer = new byte[bufferSize];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        String data = new String(buffer, 0, bytesRead, charset);
+                        consumer.accept(data);
+                        sb.append(data);
+                    }
+                    return new HttpStringResponse(new FakeHttpStringResponse(response, sb.toString()));
+                }
+            }
+        }
+    }
+
+
+    /**
+     * 猜测响应体的编码格式
+     *
+     * @param response 响应对象
+     * @return 编码格式
+     */
     private String guessResponseCharset(HttpResponse<?> response) {
         String contentType = response.headers().firstValue("Content-Type").orElse("");
         String[] params = contentType.split(";");
@@ -198,6 +259,17 @@ public class HttpRequestHandler {
         HttpRequest.Builder builder = HttpRequest.newBuilder();
         // set url
         builder.uri(URI.create(url));
+        // setcookie
+        if (!cookies.isEmpty()) {
+            StringBuilder cookieBuilder = new StringBuilder();
+            for (Map.Entry<String, String> entry : cookies.entrySet()) {
+                if (!cookieBuilder.isEmpty()) {
+                    cookieBuilder.append("; ");
+                }
+                cookieBuilder.append(entry.getKey()).append("=").append(entry.getValue());
+            }
+            headers.put("Cookie", cookieBuilder.toString());
+        }
         // set headers
         headers.forEach(builder::header);
         // set method and body  todo  process file request
@@ -207,8 +279,7 @@ public class HttpRequestHandler {
             builder.method(method, HttpRequest.BodyPublishers.noBody());
         }
         // set timeouts
-        builder.timeout(java.time.Duration.ofMillis(readTimeout));
+        builder.timeout(Duration.ofMillis(readTimeout));
         return builder.build();
     }
-
 }

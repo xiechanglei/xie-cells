@@ -1,7 +1,5 @@
 package io.github.xiechanglei.cell.common.http;
 
-import lombok.RequiredArgsConstructor;
-
 import javax.net.ssl.SSLSession;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -16,11 +14,7 @@ import java.util.Optional;
  * @author xie
  * @date 2026/7/24
  */
-@RequiredArgsConstructor
-public class FakeHttpStringResponse implements HttpResponse<String> {
-    private final HttpResponse<?> response;
-    private final String body;
-
+public record FakeHttpStringResponse(HttpResponse<?> response, String body) implements HttpResponse<String> {
     @Override
     public int statusCode() {
         return response.statusCode();
@@ -39,11 +33,6 @@ public class FakeHttpStringResponse implements HttpResponse<String> {
     @Override
     public HttpHeaders headers() {
         return response.headers();
-    }
-
-    @Override
-    public String body() {
-        return body;
     }
 
     @Override

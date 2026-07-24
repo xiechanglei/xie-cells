@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.internal.ParseContextImpl;
 import io.github.xiechanglei.cell.common.json.JsonHelper;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.net.http.HttpResponse;
 
@@ -13,12 +15,11 @@ import java.net.http.HttpResponse;
  * @author xie
  * @date 2026/7/23
  */
-public class HttpStringResponse extends HttpBaseResponse<String> {
+@RequiredArgsConstructor
+public class HttpStringResponse implements HttpResponseAble<String> {
     private DocumentContext parse;
-
-    public HttpStringResponse(HttpResponse<String> response) {
-        super(response);
-    }
+    @Getter
+    private final HttpResponse<String> response;
 
     /**
      * 获取响应的体
