@@ -1,9 +1,6 @@
 package io.github.xiechanglei.cell.common.http;
 
 
-import java.io.IOException;
-import java.util.HashMap;
-
 /**
  * Http 工具类，内部封装jdk内置的HttpClient,使调用简单化
  *
@@ -42,15 +39,5 @@ public class HttpHelper {
 
     public static HttpRequestHandler client() {
         return new HttpRequestHandler();
-    }
-
-    static void main() throws HttpStatusException, IOException, InterruptedException {
-
-        HashMap<String, Object> body = new HashMap<>();
-        body.put("text", "你好");
-        body.put("user_id", "user_hefei_001");
-        body.put("agent_name", "滁州");
-        postJson("https://taas.it.10086.cn/zyluat/dth5/wl-agent/agent/stream", body)
-                .sse(str -> System.out.println("receive: " + str));
     }
 }
