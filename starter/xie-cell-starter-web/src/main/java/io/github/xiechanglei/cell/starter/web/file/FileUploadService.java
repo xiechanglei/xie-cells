@@ -98,7 +98,7 @@ public class FileUploadService {
                 response.addHeader("Content-Length", String.valueOf(fileHandler.getFile().length()));
 
                 // 使用缓冲区复制文件内容到响应输出流
-                StreamHelper.transfer(fis, response.getOutputStream(), 1024 * 8);
+                StreamHelper.transfer(fis, response.getOutputStream(), DEFAULT_BUFFER_SIZE);
                 // 确保所有数据都被写入响应
                 response.flushBuffer();
             } catch (IOException e) {
@@ -147,7 +147,7 @@ public class FileUploadService {
 
             // 写入响应体
             try (InputStream is = new FileInputStream(fileHandler.getFile())) {
-                StreamHelper.transfer(is, response.getOutputStream(), 1024 * 8);
+                StreamHelper.transfer(is, response.getOutputStream(), DEFAULT_BUFFER_SIZE);
             }
             response.flushBuffer();
 
