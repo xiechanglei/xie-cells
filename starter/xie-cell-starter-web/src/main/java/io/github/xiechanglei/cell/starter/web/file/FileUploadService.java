@@ -29,6 +29,7 @@ import java.util.UUID;
 /**
  * 文件上传的服务类,需要自行编写controller,因为可能在不同的场景下需要使用不同的鉴权策略与数据记录,这里值提供文件的存储以及获取和流操作
  * 前置鉴权请自行开发代码
+ * todo 文件下载的部分应该使用resourceHandler那边的代码进行代理执行
  *
  * @author xie
  * @date 2026/7/21
