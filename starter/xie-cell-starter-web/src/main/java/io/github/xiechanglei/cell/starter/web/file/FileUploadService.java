@@ -2,24 +2,18 @@ package io.github.xiechanglei.cell.starter.web.file;
 
 import io.github.xiechanglei.cell.common.bean.exception.BusinessException;
 import io.github.xiechanglei.cell.common.lang.io.FileHandler;
-import io.github.xiechanglei.cell.common.lang.io.StreamHelper;
-import io.github.xiechanglei.cell.starter.web.utils.RequestHandler;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import io.github.xiechanglei.cell.starter.web.resoure.CellResourceResponseHandler;
+import io.github.xiechanglei.cell.starter.web.resoure.ResourceInfo;
+import io.github.xiechanglei.cell.starter.web.resoure.ResourceMediaType;
 import lombok.RequiredArgsConstructor;
 import net.coobird.thumbnailator.Thumbnails;
-import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.NoSuchAlgorithmException;
-import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -37,9 +31,9 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class FileUploadService {
-    private final FileUploadProperties fileUploadProperties;
-    public static final int DEFAULT_BUFFER_SIZE = 8192;
+    public  static  final String THUMBNAIL_SUFFIX = "png";
 
+    private final FileUploadProperties fileUploadProperties;
 
     private static final DateTimeFormatter HTTP_DATE_FORMAT =
             DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'")
@@ -88,26 +82,9 @@ public class FileUploadService {
      * 将md5值对应的文件写入响应,主要用于下载
      * @param md5 文件的md5
      */
-    public void asResponse(String md5, String fileName) {
-        HttpServletResponse response = RequestHandler.getCurrentResponse();
+    public ResponseEntity<?> asResponse(String md5) {
         FileHandler fileHandler = getFile(md5);
-        if (fileHandler.exists()) {
-            // attachment 以及中文文件名处理
-            try (java.io.FileInputStream fis = new java.io.FileInputStream(fileHandler.getFile())) {
-                response.addHeader("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, StandardCharsets.UTF_8));
-                response.addHeader("Content-Type", "application/octet-stream");
-                response.addHeader("Content-Length", String.valueOf(fileHandler.getFile().length()));
-
-                // 使用缓冲区复制文件内容到响应输出流
-                StreamHelper.transfer(fis, response.getOutputStream(), DEFAULT_BUFFER_SIZE);
-                // 确保所有数据都被写入响应
-                response.flushBuffer();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        }
+        return CellResourceResponseHandler.useFile(fileHandler.getFile().getAbsolutePath());
     }
 
     /**
@@ -115,47 +92,15 @@ public class FileUploadService {
      * 1. 处理404
      * 2. 处理缓存机制
      * 3. 处理文件的缩略图生成
+     *
+     * @param md5       文件的md5
+     * @param maxWidth  最大宽度
+     * @param maxHeight 最大高度
      */
-    public void asImageResponse(String md5, Integer maxWidth, Integer maxHeight) throws IOException {
+    public ResponseEntity<?> asImageResponse(String md5, Integer maxWidth, Integer maxHeight) throws IOException {
         FileHandler fileHandler = getImageFileHandler(md5, maxWidth, maxHeight);
-        HttpServletResponse response = RequestHandler.getCurrentResponse();
-        HttpServletRequest request = RequestHandler.getCurrentRequest();
-        if (fileHandler.exists()) {
-            // 缓存判断
-            // ETag 使用文件名（MD5部分）
-            String etag = "\"" + md5 + "\"";
-
-            // 检查 If-None-Match，命中则返回 304
-            String ifNoneMatch = request.getHeader(HttpHeaders.IF_NONE_MATCH);
-            if (etag.equals(ifNoneMatch)) {
-                response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-                return;
-            }
-
-            // 设置缓存头
-            response.setHeader(HttpHeaders.ETAG, etag);
-            response.setHeader(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000, immutable");
-
-            // Last-Modified
-            long lastModified = fileHandler.getFile().lastModified();
-            response.setHeader(HttpHeaders.LAST_MODIFIED, HTTP_DATE_FORMAT.format(Instant.ofEpochMilli(lastModified)));
-
-            // Content-Type
-
-            response.setContentType(FileUploadUtil.getImageContentType(fileHandler));
-            // set content length
-            response.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(fileHandler.size()));
-
-            // 写入响应体
-            try (InputStream is = new FileInputStream(fileHandler.getFile())) {
-                StreamHelper.transfer(is, response.getOutputStream(), DEFAULT_BUFFER_SIZE);
-            }
-            response.flushBuffer();
-
-        } else {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        }
-
+        ResourceInfo resourceInfo = ResourceInfo.withFilePath(fileHandler.getFile().getAbsolutePath()).mediaType(ResourceMediaType.JPEG);
+        return CellResourceResponseHandler.useResource(resourceInfo);
     }
 
     public FileHandler getImageFileHandler(String md5, Integer maxWidth, Integer maxHeight) throws IOException {
@@ -201,6 +146,7 @@ public class FileUploadService {
         // 真的真的需要生成并返回了
         Thumbnails.of(originalFileHandler.getFile())
                 .size(maxWidth, maxHeight)
+                .outputFormat(THUMBNAIL_SUFFIX)
                 .toFile(imageFileWithSize.getFile());
         clearImageCache(imageFileDirHandler);
         return imageFileWithSize;

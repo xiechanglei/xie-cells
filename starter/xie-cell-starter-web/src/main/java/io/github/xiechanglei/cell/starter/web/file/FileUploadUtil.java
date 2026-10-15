@@ -17,6 +17,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 
+import static io.github.xiechanglei.cell.starter.web.file.FileUploadService.THUMBNAIL_SUFFIX;
+
 /**
  * 文件上传工具类
  *
@@ -24,7 +26,6 @@ import java.util.Iterator;
  * @date 2026/7/21
  */
 public class FileUploadUtil {
-
 
     @NonNull
     public static String copyAndGetMd5(MultipartFile file, FileHandler tempFileHandler) throws IOException, NoSuchAlgorithmException {
@@ -93,7 +94,7 @@ public class FileUploadUtil {
     }
 
     public static FileHandler getImageFileWithSize(FileHandler file, Integer width, Integer height) {
-        return file.withSubPath(width + "_" + height);
+        return file.withSubPath(width + "_" + height + "." + THUMBNAIL_SUFFIX);
     }
 
     public static FileHandler getImageDescFile(FileHandler file) {
